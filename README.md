@@ -5,7 +5,7 @@
 ` ***/login (POST)*** 
 	body.email
 	body.password
-		-> json [{
+		-> status(201).json [{
 			user_id
 			}] || status (401)`
 
@@ -16,27 +16,27 @@
 	body.address
 	body.adress_nr
 	body.box
-		-> json[{
+		-> status(201).json[{
 			user_id
 			}] || status(401)`
 
 ### All Lobby
 
-` ***/allLobby (GET)***
-		-> JSON [{
+` ***/allLobby/:page (GET)***
+		-> status(200).JSON [{
 		}]`
 
 ### One Lobby
 
-` ***/lobby (GET)***
-		-> JSON [{	
+` ***/lobby/:lobby_id (GET)***
+		-> status(200).JSON [{	
 		}]`
 
 ` ***/lobby/bid (POST)***
 	body.bidAmount
 	body.user_id
 	body.lobby_id
-		-> JSON [{
+		-> statuts(201).JSON [{
 			actualAmount
 			}]`
 
@@ -47,14 +47,14 @@
 
 ### Historic
 
-`***/historic (GET)***
-	-> JSON [{
+`***/historic/:page (GET)***
+	-> status(200).JSON [{
 		}]`
 
 ### Account 
 
 `***/account/:user_id (GET)***
-	-> JSON [{
+	-> status(200).JSON [{
 		}] `
 
 `***/account (UPDATE)***
@@ -69,7 +69,7 @@
 ### My Biddings
 
 `***/my_bidding/:user_id (GET)***
-	-> JSON [{
+	-> statuts(200).JSON [{
 		}]`
 
 `***/my_bidding/payment (POST)***
@@ -80,7 +80,7 @@
 ### My Auctions
 
 `***/my_auction/:user_id (GET)***
-	-> JSON [{
+	-> status(200).JSON [{
 		}]`
 
 `***/my_auction (POST)***
@@ -92,6 +92,19 @@
 	body.itemLink
 		-> status(201)`
 
+`***/my_auction (UPDATE)***
+	body.user_id
+	body.newItemName
+	body.newAuctionStart
+	body.newAuctionDuration
+	body.newItemDescription
+	body.newItemLink
+		-> status(201)`
+
+`***/my_auction (DELETE)***
+	body.user_id
+	body.item_id
+		-> status(200)`
 
 
 
