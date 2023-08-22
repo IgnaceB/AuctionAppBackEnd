@@ -5,6 +5,7 @@
   "main": "server.mjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "start" : "node server.mjs",
     "dev": "nodemon server.mjs"
   },
   "author": "ignace bernard",
