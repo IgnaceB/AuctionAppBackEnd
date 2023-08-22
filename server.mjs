@@ -2,7 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import connect from './helpers/db.mjs'
 
-console.log("ca corse")
+console.log("ca deploie")
 const PORT = 3000
 const app = express()
 
