@@ -11,13 +11,14 @@ const app = express()
 })*/
 
 app.use(cors())
+app.use(express.json())
 
 
 app.get("/", async (req, res)=>{
 	console.log("ca route")
 	const response = await connect("select *from users")
 	console.log(response.rows[0])
-	res.send(response.rows[0])
+	res.status(200).json(response.rows[0])
 })
 
 app.listen(PORT,()=>{
