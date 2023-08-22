@@ -16,7 +16,8 @@ app.use(cors())
 app.get("/", async (req, res)=>{
 	console.log("ca route")
 	const response = await connect("select *from users")
-	res.status(200).json(response)
+	console.log(response.rows[0])
+	res.send(response.rows[0])
 })
 
 app.listen(PORT,()=>{
