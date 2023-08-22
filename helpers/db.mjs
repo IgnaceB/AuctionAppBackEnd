@@ -12,7 +12,7 @@ const connection = async (myQuery)=>{
 	database: process.env.database,
 	password: process.env.password,
 	port: process.env.port,
-}
+})
 	const connect = await client.connect()
 	const response = await client.query(myQuery)
 	console.log(response.rows[0])
