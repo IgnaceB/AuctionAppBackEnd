@@ -1,6 +1,6 @@
 import express from 'express'
 import cors from 'cors'
-console.log("ca update")
+console.log("ca corse")
 const PORT = 3000
 const app = express()
 
@@ -8,7 +8,10 @@ const app = express()
 	http://example.com
 })*/
 
-app.get("/", cors(),(req, res)=>{
+app.use(cors())
+
+
+app.get("/", (req, res)=>{
 	console.log("ca route")
 	res.sendStatus(200)
 })
