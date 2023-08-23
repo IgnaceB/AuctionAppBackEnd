@@ -10,9 +10,10 @@ https://auction.oxomoto.co/
 - body.password  :exclamation:
 
 OUTPUT |
- - status(201).json [{  
-user_id  
-}] || status (401)
+ - status(201).json({  
+id : integer,  
+token : string,
+}) || status(401).json({message : string})
 
 ##### /signup (POST)
  INPUT |
@@ -26,8 +27,8 @@ user_id
 
 OUTPUT |
 - status(201).json[{  
-			user_id  
-			}] || status(401)
+			message : string 
+			}] || status(401).json({message : string}) || status(404).json({message : string})
 
 ### All Lobby  
 
