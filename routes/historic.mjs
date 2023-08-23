@@ -8,14 +8,14 @@ router.get('/:page',async (req,res)=>{
 	// and calculate the nr of the first item to be display
 	try{
 	const currentPage=req.params.page
-	let nrEntity = 20
+	let nrEntity = 50
 	let startSearch = nrEntity*currentPage
 
 	//retrieve data from db from startSearch to startSearch+nrEntity
-	const lobbyQuery = `select *from lobby order by id offset ${startSearch} limit ${nrEntity}`
-	const dataLobby= await connect(lobbyQuery)
+	const itemsQuery = `select *from items order by id offset ${startSearch} limit ${nrEntity}`
+	const dataItems= await connect(itemsQuery)
 
-	res.status(200).json(dataLobby.rows)
+	res.status(200).json(dataItems.rows)
 }
 catch(err){
 	console.log(err)
