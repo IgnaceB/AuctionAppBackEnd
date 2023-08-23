@@ -6,6 +6,8 @@ import jwt from 'jsonwebtoken'
 const router=express.Router()
 
 router.post('/login',async(req,res)=>{
+
+	//Retrieve data from request
 	const userEmail=req.body.email
 	const userPassword=req.body.password
 

@@ -46,7 +46,7 @@ OUTPUT |
 
 ##### /lobby/bid (POST) 
 INPUT |
-- body.bidAmount  :exclamation:
+- body.bidAmount  :exclamation: 
 - body.user_id  :exclamation:
 - body.lobby_id :exclamation:
 
@@ -55,7 +55,7 @@ OUTPUT|
 			actualAmount : number 
 			}]
 
-##### /lobby/:lobbyId/like (POST)
+##### /lobby/like (POST)
 INPUT|
 - body.user_id  :exclamation:
 - body.lobby_id  :exclamation:
@@ -98,8 +98,8 @@ OUTPUT |
 
 ##### /my_bidding/payment (POST)  
 INPUT |
- - body.id_item  :exclamation:
-- body.id_user  :exclamation:
+ - body.item_id  :exclamation:
+- body.user_id  :exclamation:
 
 OUTPUT |
 -  status(201)  
