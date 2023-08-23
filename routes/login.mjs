@@ -24,25 +24,26 @@ router.post('/login',async(req,res)=>{
 		if (checkPassword){
 
 		//generate and send jwt
-		const accessToken=jwt.sign(usersData.rows[0]["id"],process.env.ACCESS_TOKEN_SECRET)
+			const accessToken=jwt.sign(usersData.rows[0]["id"],process.env.ACCESS_TOKEN_SECRET)
 
-		res.status(201).json({id : usersData.rows[0]["id"], token : accessToken})
-	}
-	else {
-		
-		
-		res.status(401).json({message : "incorrect password"})
-	}
+			res.status(201).json({id : usersData.rows[0]["id"], token : accessToken})
+		}
+		else {
 
-}
+
+			res.status(401).json({message : "incorrect password"})
+		}
+
+	}
 	else {
 		res.status(401).json({message : "incorrect email"})
 	}
 })
 
+
 router.post('/signup',async(req,res)=>{
 
-
+	//retrieve data from request
 	const email=req.body.email
 	const password=req.body.password
 	const name=req.body.name
@@ -51,8 +52,10 @@ router.post('/signup',async(req,res)=>{
 	const adress_nr=req.body.adress_nr
 	const box = req.body.box
 
+	//generate crypted password
 	const salt = await bcrypt.genSalt(10)
 	const hashPassword= await bcrypt.hash(password, salt)
+	// verify if the user exist
 	const checkEmail= await connect(`select *from users where email='${email}'`)
 
 	if(checkEmail.rows[0]){
@@ -61,21 +64,25 @@ router.post('/signup',async(req,res)=>{
 	}
 	else {
 		try {
-		const queryUser=`insert into users (email, name, phone, address, adress_nr, box)
-		VALUES ('${email}','${name}','${phone}','${address}','${adress_nr}','${box}')`
-		const createUser = await connect(queryUser)
-		
-		const idUser=await connect(`select id from users where email='${email}'`) 
-		const queryLogin=`insert into login (id_user,password) VALUES
-		('${idUser.rows[0]["id"]}','${hashPassword}')`
-		const createLogin=await connect(queryLogin)
+		//update table user with the data provided
+			const queryUser=`insert into users (email, name, phone, address, adress_nr, box)
+			VALUES ('${email}','${name}','${phone}','${address}','${adress_nr}','${box}')`
+			const createUser = await connect(queryUser)
 
-		return res.status(200).json({message : "user successfully created"})
+		//retrieve id of the just created user
+			const idUser=await connect(`select id from users where email='${email}'`)
+
+		//update table login with id and crypted password 
+			const queryLogin=`insert into login (id_user,password) VALUES
+			('${idUser.rows[0]["id"]}','${hashPassword}')`
+			const createLogin=await connect(queryLogin)
+
+			return res.status(201).json({message : "user successfully created"})
+		}
+		catch(err){
+			return res.status(404).json({message:"connection failed, contact admin"})
+		}
 	}
-	catch(err){
-		return res.status(404).json({message:"connection failed, contact admin"})
-	}
-}
 })
 
 export default router
