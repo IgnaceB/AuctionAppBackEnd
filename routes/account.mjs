@@ -22,14 +22,37 @@ router.get('/:user_id',async (req,res)=>{
 })
 
 router.patch('/',async (req,res)=>{
-	//retrieve the id of the user
-	try{
-		const currentUser=req.params.user_id
+	//retrieve the new information and the id of the user
+	const idUser=req.body.user_id
+	const data={
+		name:req.body.newName,
+		phone:req.body.newPhone,
+		address:req.body.newAddress,
+		adress_nr:req.body.newAdress_nr,
+		box : req.body.newBox,
+	}
 
-	//retrieve data from the users table
-		const userQuery = `select *from users where id='${currentUser}'`
-		const dataUser= await connect(userQuery)
-		res.status(200).json(dataUser.rows)
+	let array=[]
+
+	Object.keys(data).forEach(key=>{
+		if (data[key]!=undefined){
+			array.push(`${key}='${data[key]}'`)
+		}
+	})
+
+	let queryUser="update users set "
+	for (let i=0;i<array.length;i++){
+		if (i==array.length-1){
+			queryUser+=array[i]+` where id=${idUser}`
+		}
+		else {
+			queryUser+=' '+array[i]+', '
+		}
+	}
+	
+	try{
+		const updateUser = await connect(queryUser)
+		res.status(200).json({message:'user correctly udpated'})
 	}
 	catch(err){
 		console.log(err)

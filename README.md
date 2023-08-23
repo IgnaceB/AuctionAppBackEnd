@@ -77,7 +77,7 @@ OUTPUT |
 - status(200).JSON [{  
 		}] 
 
-##### /account (UPDATE)
+##### /account (PATCH)
 INPUT |
 - body.user_id  :exclamation:
 - body.newName  
