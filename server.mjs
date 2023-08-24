@@ -13,6 +13,8 @@ import lobbyRoutes from './routes/lobby.mjs'
 import historicRoutes from './routes/historic.mjs'
 import accountRoutes from './routes/account.mjs'
 import biddingRoutes from './routes/my_bidding.mjs'
+import auctionRoutes from './routes/my_auction.mjs'
+import chatRoutes from './routes/chat.mjs'
 /*const corsOption=({
 	http://example.com
 })*/
@@ -27,6 +29,8 @@ app.use('/lobby',lobbyRoutes)
 app.use('/historic',historicRoutes)
 app.use('/account',accountRoutes)
 app.use('/my_bidding',biddingRoutes)
+app.use('/my_auction',auctionRoutes)
+app.use('/chat',chatRoutes)
 
 app.get("/", async (req, res)=>{
 	console.log("ca route")
