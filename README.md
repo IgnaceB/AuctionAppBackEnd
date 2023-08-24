@@ -89,6 +89,11 @@ INPUT |
 OUTPUT |
 - status(201)
 
+##### /account/like/:user_id (GET)
+OUTPUT |
+- status(201).JSON [{  
+		}] 
+
 ### My Biddings  
 
 ##### /my_bidding/:user_id (GET) 
@@ -115,20 +120,21 @@ OUTPUT |
 INPUT |
 - body.user_id  :exclamation:
 - body.itemName  :exclamation:
-- body.auctionStart  :exclamation:
-- body.auctionDuration  :exclamation:
+- body.auctionStart  :exclamation: DD-MM-YYYY HH:MM:SS.DCM
+- body.auctionDuration  :exclamation: integer (seconds)
 - body.itemDescription  
 - body.itemLink
 
 OUTPUT |
 - status(201)  
 
-##### /my_auction (UPDATE)
+##### /my_auction (PATCH)
 INPUT |
-- body.user_id  :exclamation:
+- body.item_id  :exclamation:
+- body.user_id :exclamation:
 - body.newItemName   
-- body.newAuctionStart  
-- body.newAuctionDuration  
+- body.newAuctionStart  DD-MM-YYYY HH:MM:SS.DCM
+- body.newAuctionDuration  integer (seconds)
 - body.newItemDescription  
 - body.newItemLink  
 
@@ -142,6 +148,22 @@ INPUT |
 
 OUTPUT |
 - status(200)   
+
+### Chat  
+
+##### /chat/:lobby_id (GET) 
+OUTPUT |
+- status(200).JSON [{  
+		}]  
+
+##### /chat (POST)
+INPUT |
+- body.user_id  :exclamation:
+- body.lobby_id  :exclamation:
+- body.message 
+
+OUTPUT |
+- status(201)  
 
 
 

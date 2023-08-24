@@ -45,11 +45,11 @@ router.post('/bid',async (req,res)=>{
 			const updateBid= await connect(bidQuery)
 			res.status(200).json({message : "successfully bid on the item"})   
 		}
-			catch(err){
-				console.log(err)
-				res.status(404).json({message:'connection error, contact webmaster'})
-			}   
-		}
+		catch(err){
+			console.log(err)
+			res.status(404).json({message:'connection error, contact webmaster'})
+		}   
+	}
 
 	else {
 		res.status(401).json({message : 'error, the bid is not the higher on this item'})

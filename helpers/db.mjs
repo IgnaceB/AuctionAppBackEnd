@@ -17,9 +17,10 @@ const connection = async (myQuery)=>{
 	const response = await client.query(myQuery)
 	
 	client.end()
-	return response}
+	return response
+}
 	catch (err){
-		return err
+		throw err
 	}
 
 }
