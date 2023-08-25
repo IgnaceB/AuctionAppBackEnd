@@ -11,11 +11,33 @@ router.get('/:user_id',async (req,res)=>{
 	try{
 		const currentUser=req.params.user_id
 
-	//retrieve data from the bid table
-		const userQuery = `select *from bid where id_bidder='${currentUser}' order by id desc`
-		const dataUser= await connect(userQuery)
+	//retrieve data from the bid table, item table, and lobby table
+		const bidQuery = `select * from bid
+		 where id_bidder='${currentUser}' order by bid.id desc`
+		const dataBid= await connect(bidQuery)
 		
-		res.status(200).json(dataUser.rows)
+		//setting up out of scope the container of all the informations
+		let allData = []
+
+		//looping on the number of bidded item, to associate correct lobby and items to each bid
+		for (let i=0;i<dataBid.rows.length;i++){
+		const itemQuery= `select *from items 
+		where id=${dataBid.rows[i]["id_item"]}`
+		const dataItem=await connect(itemQuery)
+
+		const lobbyQuery= `select *from lobby
+		where id_item=${dataBid.rows[i]["id_item"]}`
+		const dataLobby=await connect(lobbyQuery)
+
+		allData[i]={
+			bid_information : dataBid.rows[i],
+			item_information : dataItem.rows,
+			lobby_information : dataLobby.rows}
+	}
+
+		
+		res.status(200).json(allData)
+
 	}
 	catch(err){
 		console.log(err)
