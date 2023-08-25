@@ -2,6 +2,12 @@
 
 https://auction.oxomoto.co/
 
+
+all the routes available on this doc : 
+https://documenter.getpostman.com/view/29343075/2s9Y5WyPro#f5f76950-8f75-4c19-8818-28ab068311be
+
+routes behind deprecated !!!!!!
+
 ### Login  
 
 ##### /login (POST)  
