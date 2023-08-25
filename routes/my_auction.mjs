@@ -37,7 +37,7 @@ router.post('/',async (req,res)=>{
 
 
 	try{
-		const createItemQuery=`insert into items (id_seller, name, auction_start, auction_duration, description, link, created_at, status)
+		const createItemQuery=`insert into items (id_seller, name, auction_start, auction_duration, description, cover_lobby, created_at, status)
 		VALUES ('${bodyData.id_seller}','${bodyData.itemName}','${bodyData.auctionStart}','${bodyData.auctionDuration}','${bodyData.itemDescription}','${bodyData.itemLink}','${now}','0')`
 		const createItem= await connect(createItemQuery)
 		res.status(200).json({message : `item added`})
