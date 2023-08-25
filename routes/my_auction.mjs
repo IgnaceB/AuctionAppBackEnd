@@ -31,7 +31,7 @@ router.post('/',async (req,res)=>{
 		auctionStart : req.body.auctionStart,
 		auctionDuration : req.body.auctionDuration,
 		itemDescription : req.body.itemDescription,
-		itemLink : req.body.itemLink
+		itemLink : req.body.coverLobby
 	}
 	let now = DateTime.now().toSQL()
 

@@ -35,8 +35,8 @@ router.patch('/',async (req,res)=>{
 		adress_nr:req.body.newAdress_nr,
 		box : req.body.newBox,
 		settings : req.body.settings,
-		avatar : req.body.avatar,
-		username : req.body.username
+		avatar : req.body.newAvatar,
+		username : req.body.newUsername
 	}
 	//define the array out of the scope of the function
 	let array=[]
