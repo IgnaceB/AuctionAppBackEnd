@@ -23,7 +23,7 @@ router.get('/:user_id',async (req,res)=>{
 	}
 })
 
-//update status of an item -> payed
+//create new item in the items table
 router.post('/',async (req,res)=>{
 	const bodyData={
 		id_seller : req.body.user_id,
@@ -40,7 +40,7 @@ router.post('/',async (req,res)=>{
 		const createItemQuery=`insert into items (id_seller, name, auction_start, auction_duration, description, link, created_at, status)
 		VALUES ('${bodyData.id_seller}','${bodyData.itemName}','${bodyData.auctionStart}','${bodyData.auctionDuration}','${bodyData.itemDescription}','${bodyData.itemLink}','${now}','0')`
 		const createItem= await connect(createItemQuery)
-		res.status(200).json({message : 'item added'})
+		res.status(200).json({message : `item added`})
 	}
 	catch(err){
 		console.log(err)
@@ -50,11 +50,11 @@ router.post('/',async (req,res)=>{
 router.patch('/',async (req,res)=>{
 	
 	const bodyData={
-		name : req.body.itemName,
-		auction_start : req.body.auctionStart,
-		auction_duration : req.body.auctionDuration,
-		description : req.body.itemDescription,
-		link : req.body.itemLink
+		name : req.body.newItemName,
+		auction_start : req.body.newAuctionStart,
+		auction_duration : req.body.newAuctionDuration,
+		description : req.body.newItemDescription,
+		link : req.body.newItemLink
 	}
 
 	const idUser=req.body.user_id
@@ -71,8 +71,9 @@ router.patch('/',async (req,res)=>{
 		// verification if the auction didn't start yet
 		const timeQuery = `select auction_start from items where id=${idItem} `
 		const timeRequest = await connect(timeQuery)
-
-		if (timeRequest.rows[0].auction_start>now){
+		console.log(timeRequest.rows[0].auction_start)
+		console.log(now)
+		if (timeRequest.rows[0].auction_start.valueOf()>now){
 			
 
 	//define the array out of the scope of the function
@@ -91,12 +92,13 @@ router.patch('/',async (req,res)=>{
 			for (let i=0;i<array.length;i++){
 		//filter on the last element of the array to remove ',' and add the end of request 
 				if (i==array.length-1){
-					queryUpdateItem+=array[i]+` where id=${idUser}`
+					queryUpdateItem+=array[i]+` where id=${idItem}`
 				}
 				else {
 					queryUpdateItem+=' '+array[i]+', '
 				}
 			}
+			console.log(queryUpdateItem)
 
 			try{
 				const updateItem= await connect(queryUpdateItem)

@@ -23,7 +23,7 @@ router.get('/:user_id',async (req,res)=>{
 	}
 })
 
-router.patch('/',authentication,async (req,res)=>{
+router.patch('/',async (req,res)=>{
 	//retrieve the new information and the id of the user
 	const idUser=req.body.user_id
 
@@ -34,6 +34,9 @@ router.patch('/',authentication,async (req,res)=>{
 		address:req.body.newAddress,
 		adress_nr:req.body.newAdress_nr,
 		box : req.body.newBox,
+		settings : req.body.settings,
+		avatar : req.body.avatar,
+		username : req.body.username
 	}
 	//define the array out of the scope of the function
 	let array=[]

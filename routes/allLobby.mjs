@@ -32,7 +32,7 @@ router.get('/:page',async (req,res)=>{
 		let startSearch = nrEntity*currentPage
 
 	//retrieve data from db from startSearch to startSearch+nrEntity
-		const lobbyQuery = `select *from lobby order by end_at offset ${startSearch} limit ${nrEntity} asc`
+		const lobbyQuery = `select *from lobby order by end_at asc offset ${startSearch} limit ${nrEntity}`
 		const dataLobby= await connect(lobbyQuery)
 
 		res.status(200).json(dataLobby.rows)

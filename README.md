@@ -18,7 +18,7 @@ token : string,
 ##### /signup (POST)
  INPUT |
 - body.name :exclamation:
-- body.mail  :exclamation:
+- body.email  :exclamation:
 - body.phone  
 - body.address  
 - body.adress_nr  
@@ -85,6 +85,9 @@ INPUT |
 - body.newAddress  
 - body.newAdress_nr  
 - body.newBox
+- body.settings
+- body.avatar
+- body.username
 
 OUTPUT |
 - status(201)
@@ -120,7 +123,7 @@ OUTPUT |
 INPUT |
 - body.user_id  :exclamation:
 - body.itemName  :exclamation:
-- body.auctionStart  :exclamation: DD-MM-YYYY HH:MM:SS.DCM
+- body.auctionStart  :exclamation: MM-DD-YYYY HH:MM:SS.DCM
 - body.auctionDuration  :exclamation: integer (seconds)
 - body.itemDescription  
 - body.itemLink
