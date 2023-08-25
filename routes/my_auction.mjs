@@ -138,7 +138,99 @@ router.patch('/',async (req,res)=>{
 	}
 })
 
+router.patch('/pictures',async (req,res)=>{
+	
+	const newPictures = req.body.newPictures
+	const idUser=req.body.user_id
+	const idItem=req.body.item_id
+	let now = DateTime.now().valueOf()
 
+    //verification if the user is the seller on the items table 
+
+	const verifQuery=`select *from items where id_seller=${idUser} and id=${idItem}`
+	const verification = await connect(verifQuery)
+
+	if (verification.rows.length>0){
+
+		// verification if the auction didn't start yet
+		const timeQuery = `select auction_start from items where id=${idItem} `
+		const timeRequest = await connect(timeQuery)
+	
+		if (timeRequest.rows[0].auction_start.valueOf()>now){
+				try{
+				//delete previous pictures
+				const queryDeletePictures=`delete from items_pictures where id_item=${idItem}`
+				const deletePictures= await connect(queryDeletePictures)
+
+				//looping on the number of added pictures and creating a line in the table items_pictures
+				newPictures.forEach(async(element)=>{
+					const queryUpdatePictures=`insert into items_pictures (id_item, link) VALUES ('${idItem}','${element}')`
+					const updatePictures= await connect(queryUpdatePictures)
+				})
+				
+				res.status(200).json({message : 'pictures updated'})
+			}
+			catch(err){
+				console.log(err)
+				res.status(404).json({message:err})
+			}
+
+		}
+		else {
+			res.status(401).json({message:"auction already started"})
+		}
+	}
+	else {
+		res.status(404).json({message:"access denied"})
+	}
+})
+
+router.patch('/tags',async (req,res)=>{
+	
+	const newTags = req.body.newTags
+	const idUser=req.body.user_id
+	const idItem=req.body.item_id
+	let now = DateTime.now().valueOf()
+
+    //verification if the user is the seller on the items table 
+
+	const verifQuery=`select *from items where id_seller=${idUser} and id=${idItem}`
+	const verification = await connect(verifQuery)
+
+	if (verification.rows.length>0){
+
+		// verification if the auction didn't start yet
+		const timeQuery = `select auction_start from items where id=${idItem} `
+		const timeRequest = await connect(timeQuery)
+	
+		if (timeRequest.rows[0].auction_start.valueOf()>now){
+				try{
+				//delete previous Tags
+				const queryDeleteTags=`delete from items_tags where id_item=${idItem}`
+				const deleteTags= await connect(queryDeleteTags)
+
+				//looping on the number of added Tags and creating a line in the table items_Tags
+				newTags.forEach(async(element)=>{
+					const queryUpdateTags=`insert into items_tags (id_item, tag) VALUES ('${idItem}','${element}')`
+					const updateTags= await connect(queryUpdateTags)
+				})
+				
+				res.status(200).json({message : 'tags updated'})
+			}
+			catch(err){
+				console.log(err)
+				res.status(404).json({message:err})
+			}
+
+		}
+		else {
+			res.status(401).json({message:"auction already started"})
+		}
+	}
+	else {
+		res.status(404).json({message:"access denied"})
+	}
+})
 
 router.delete('/',async (req,res)=>{
 	
