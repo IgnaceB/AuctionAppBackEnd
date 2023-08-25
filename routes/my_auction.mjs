@@ -48,7 +48,7 @@ router.post('/',async (req,res)=>{
 	}})
 
 router.patch('/',async (req,res)=>{
-	
+	console.log('automated')
 	const bodyData={
 		name : req.body.newItemName,
 		auction_start : req.body.newAuctionStart,
