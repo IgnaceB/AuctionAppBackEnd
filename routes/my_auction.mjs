@@ -54,7 +54,7 @@ router.patch('/',async (req,res)=>{
 		auction_start : req.body.newAuctionStart,
 		auction_duration : req.body.newAuctionDuration,
 		description : req.body.newItemDescription,
-		link : req.body.newItemLink
+		cover_lobby : req.body.newCoverLobby
 	}
 
 	const idUser=req.body.user_id
