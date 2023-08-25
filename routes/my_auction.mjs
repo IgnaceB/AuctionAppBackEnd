@@ -31,15 +31,35 @@ router.post('/',async (req,res)=>{
 		auctionStart : req.body.auctionStart,
 		auctionDuration : req.body.auctionDuration,
 		itemDescription : req.body.itemDescription,
-		itemLink : req.body.coverLobby
+		coverLobby : req.body.coverLobby,
+		tags : req.body.tags,
+		pictures : req.body.pictures
 	}
 	let now = DateTime.now().toSQL()
 
-
 	try{
+		//create the item in the item table
 		const createItemQuery=`insert into items (id_seller, name, auction_start, auction_duration, description, cover_lobby, created_at, status)
-		VALUES ('${bodyData.id_seller}','${bodyData.itemName}','${bodyData.auctionStart}','${bodyData.auctionDuration}','${bodyData.itemDescription}','${bodyData.itemLink}','${now}','0')`
+		VALUES ('${bodyData.id_seller}','${bodyData.itemName}','${bodyData.auctionStart}','${bodyData.auctionDuration}','${bodyData.itemDescription}','${bodyData.coverLobby}','${now}','0')`
 		const createItem= await connect(createItemQuery)
+		
+
+		//retrieve id of just created item
+
+		const getItemIdQuery=`select *from items where id_seller=${bodyData.id_seller} order by id desc limit 1`
+		const getItemID= await connect(getItemIdQuery)
+
+		//creating one entry for each tag in the bodyData.tag array in the table items_tags
+		
+		for (let i=0;i<bodyData.tags.length;i++){
+			const createEntryQuery=`insert into items_tags (id_item, tag) VALUES ('${getItemID.rows[0]["id"]}','${bodyData.tags[i]}')`
+			const createEntry = await connect(createEntryQuery)
+		}
+		//creating one entry for each picture in the bodyData.pictures array in the table items_pictures
+		for (let i=0;i<bodyData.pictures.length;i++){
+			const createEntryQuery=`insert into items_pictures (id_item, link) VALUES ('${getItemID.rows[0]["id"]}','${bodyData.pictures[i]}')`
+			const createEntry = await connect(createEntryQuery)
+		}
 		res.status(200).json({message : `item added`})
 	}
 	catch(err){
@@ -48,7 +68,7 @@ router.post('/',async (req,res)=>{
 	}})
 
 router.patch('/',async (req,res)=>{
-	console.log('automated')
+	
 	const bodyData={
 		name : req.body.newItemName,
 		auction_start : req.body.newAuctionStart,
@@ -118,6 +138,8 @@ router.patch('/',async (req,res)=>{
 	}
 })
 
+
+
 router.delete('/',async (req,res)=>{
 	
 
@@ -139,9 +161,19 @@ router.delete('/',async (req,res)=>{
 		if (timeRequest.rows[0].auction_start>now){
 			
 			try{
+
+				//delete entry on pictures table
+				const deletePicQuery = `delete from items_pictures where id_item=${idItem}`
+				const deletePicture = await connect (deletePicQuery)
+
+				//delete entry on tags table
+				const deleteTagsQuery = `delete from items_tags where id_item=${idItem}`
+				const deleteTags = await connect (deleteTagsQuery)
+
 				//delete entry on item table
 				const deleteQuery = `delete from items where id=${idItem}`
 				const deleteItem= await connect(deleteQuery)
+
 				res.status(200).json({message : 'item deleted'})
 			}
 			catch(err){
