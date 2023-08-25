@@ -53,6 +53,8 @@ router.post('/signup',async(req,res)=>{
 	const address=req.body.address
 	const adress_nr=req.body.adress_nr
 	const box = req.body.box
+	const avatar = req.body.avatar
+	const username = req.body.username
 
 	//generate crypted password
 	const salt = await bcrypt.genSalt(10)
@@ -67,8 +69,8 @@ router.post('/signup',async(req,res)=>{
 	else {
 		try {
 		//update table user with the data provided
-			const queryUser=`insert into users (email, name, phone, address, adress_nr, box)
-			VALUES ('${email}','${name}','${phone}','${address}','${adress_nr}','${box}')`
+			const queryUser=`insert into users (email, name, phone, address, adress_nr, box, avatar, username)
+			VALUES ('${email}','${name}','${phone}','${address}','${adress_nr}','${box}','${avatar}','${username}')`
 			const createUser = await connect(queryUser)
 
 		//retrieve id of the just created user
