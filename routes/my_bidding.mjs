@@ -12,7 +12,7 @@ router.get('/:user_id',async (req,res)=>{
 		const currentUser=req.params.user_id
 
 	//retrieve data from the bid table
-		const userQuery = `select *from bid where id_bidder='${currentUser}'`
+		const userQuery = `select *from bid where id_bidder='${currentUser}' order by id desc`
 		const dataUser= await connect(userQuery)
 		
 		res.status(200).json(dataUser.rows)
@@ -51,7 +51,7 @@ router.post('/payment',async (req,res)=>{
 			res.status(404).json({message:'connection error, contact webmaster'})
 		}}
 		else {
-			res.statuts(401).json({message:'error, no such bid'})
+			res.status(401).json({message:'error, no such bid'})
 		}
 	})
 
