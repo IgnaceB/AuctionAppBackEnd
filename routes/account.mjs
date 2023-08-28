@@ -7,7 +7,7 @@ const router=express.Router()
 import {authentication} from '../helpers/controllers.mjs'
 
 //display de data of an user
-router.get('/:user_id', authentication, async (req,res)=>{
+router.get('/:user_id', async (req,res)=>{
 	//retrieve the id of the user
 	try{
 		const currentUser=req.params.user_id
