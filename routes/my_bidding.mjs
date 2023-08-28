@@ -31,8 +31,8 @@ router.get('/:user_id',async (req,res)=>{
 
 		allData[i]={
 			bid_information : dataBid.rows[i],
-			item_information : dataItem.rows,
-			lobby_information : dataLobby.rows}
+			item_information : dataItem.rows[0],
+			lobby_information : dataLobby.rows[0]}
 	}
 
 		
