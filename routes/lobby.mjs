@@ -79,6 +79,10 @@ router.post('/like',async(req,res)=>{
 		const likeToUsersQuery = `insert into likes_to_users (id_user,id_lobby) VALUES ('${user_id}',${lobby_id})`
 		const likeToUsers= await connect(likeToUsersQuery)
 
+		// insert data into lobby
+		const likeLobbyQuery = `update lobby set likes=likes+1`
+		const likeLobby=await connect(likeLobbyQuery)
+
 		res.status(201).json({message : 'like successfully added'})
 	}
 })
