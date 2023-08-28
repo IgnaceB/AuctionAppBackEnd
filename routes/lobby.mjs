@@ -49,6 +49,49 @@ router.get('/init/:lobby_id',async (req,res)=>{
 	}
 })
 
+router.get('/update_chat/:lobby_id',async (req,res)=>{
+	//retrieve the id of the lobby
+	try{
+		const currentLobby=req.params.lobby_id
+
+	//retrieve data from : 
+		// lobby -> id_item + likes
+		// chat -> new messages
+		// bid -> amount
+		// users -> avatar and username inner join message chat
+		const updateQuery = `select chat.message, chat.created_at, users.avatar, users.username
+		from chat inner join users on chat.id_user=users.id 
+		where chat.id_lobby =${currentLobby} `
+		const update = await connect(updateQuery)
+		res.status(200).json(update.rows)
+	}
+	catch(err){
+		console.log(err)
+		res.status(404).json({message:'connection error, contact webmaster'})
+	}
+})
+router.get('/update_lobby/:lobby_id',async (req,res)=>{
+	//retrieve the id of the lobby
+	try{
+		const currentLobby=req.params.lobby_id
+
+	//retrieve data from : 
+		// lobby -> id_item + likes
+		// chat -> new messages
+		// bid -> amount
+		// users -> avatar and username inner join message chat
+		const updateQuery = `select bid.amount, lobby.likes from bid
+		inner join lobby on lobby.id_item=bid.id_item
+		where lobby.id=${currentLobby} order by bid.amount desc limit 1 `
+		const update = await connect(updateQuery)
+		res.status(200).json(update.rows)
+	}
+	catch(err){
+		console.log(err)
+		res.status(404).json({message:'connection error, contact webmaster'})
+	}
+})
+
 router.get('/:lobby_id',async (req,res)=>{
 	//retrieve the id of the lobby
 	try{
