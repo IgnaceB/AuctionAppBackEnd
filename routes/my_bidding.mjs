@@ -21,7 +21,7 @@ router.get('/:user_id',async (req,res)=>{
 
 		//looping on the number of bidded item, to associate correct lobby and items to each bid
 		for (let i=0;i<dataBid.rows.length;i++){
-		const itemQuery= `select *from items 
+		const itemQuery= `select * from items 
 		where id=${dataBid.rows[i]["id_item"]}`
 		const dataItem=await connect(itemQuery)
 
