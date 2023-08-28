@@ -175,4 +175,24 @@ router.post('/like',async(req,res)=>{
 	}
 })
 
+router.delete('/like',async(req,res)=>{
+	//retrieve like informations
+	const user_id=req.body.user_id
+	const lobby_id=req.body.lobby_id
+
+	// delete the line if exist
+	try{
+	const searchLikeQuery=`delete from likes_to_users where id_user='${user_id}' and id_lobby='${lobby_id}'`
+	const searchLike= await connect(searchLikeQuery)
+	res.status(201).json({message : 'like successfully added'})
+}
+catch(err){
+	console.log(err)
+	res.status(404).json({message : "error, no such like "})
+}
+
+		res.status(201).json({message : 'like successfully added'})
+	
+})
+
 export default router
