@@ -45,6 +45,28 @@ router.get('/:user_id',async (req,res)=>{
 	}
 })
 
+router.get('/payment/:user_id',async (req,res)=>{
+	//retrieve the id of the user
+	try{
+		const currentUser=req.params.user_id
+
+	//retrieve data from the bid table, item table, and lobby table
+		const bidQuery = `select * from bid
+		inner join items on items.id=bid.id_item
+		where id_bidder='${currentUser}' and amount in 
+		(select max(amount) from bid as max_bid where max_bid.id_item=bid.id_item group by id_item) 
+		and items.status='2' order by bid.id desc`
+		const dataBid= await connect(bidQuery)
+	
+		res.status(200).json(dataBid.rows)
+
+	}
+	catch(err){
+		console.log(err)
+		res.status(404).json({message:'connection error, contact webmaster'})
+	}
+})
+
 //update status of an item -> payed
 router.post('/payment',async (req,res)=>{
 	//retrieve the id of the user and the id of the item 

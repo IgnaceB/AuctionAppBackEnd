@@ -182,16 +182,28 @@ router.delete('/like',async(req,res)=>{
 
 	// delete the line if exist
 	try{
-	const searchLikeQuery=`delete from likes_to_users where id_user='${user_id}' and id_lobby='${lobby_id}'`
+	const searchLikeQuery=`select *from likes_to_users where id_user='${user_id}' and id_lobby='${lobby_id}'`
 	const searchLike= await connect(searchLikeQuery)
-	res.status(201).json({message : 'like successfully added'})
+
+	if(searchLike.rows.length>0) {
+	//remove line from like_to_users
+	const deleteLikeQuery=`delete from likes_to_users where id_user='${user_id}' and id_lobby='${lobby_id}'`
+	const deleteLike= await connect(deleteLikeQuery)
+
+	//decrease the like amount of the lobby
+	const decreaseLikeQuery=`update lobby set likes=likes+1`
+	const decreaseLike=await connect(decreaseLikeQuery)
+
+	res.status(201).json({message : 'like successfully removed'})
+}
+else {
+	res.status(401).json({message : 'no like associated'})
+}
 }
 catch(err){
 	console.log(err)
-	res.status(404).json({message : "error, no such like "})
-}
-
-		res.status(201).json({message : 'like successfully added'})
+	res.status(404).json({message : "error, contact webmaster "})
+}	
 	
 })
 
