@@ -97,7 +97,7 @@ router.get('/payment/:user_id',async (req,res)=>{
 //update status of an item -> payed
 router.post('/payment',authentication, async (req,res)=>{
 	//retrieve the id of the user and the id of the item 
-	const currentUser=res.locals/user_id
+	const currentUser=res.locals.user_id
 	const currentItem=req.body.item_id
 
 	//check if the bid exists 
@@ -106,7 +106,7 @@ router.post('/payment',authentication, async (req,res)=>{
 	const checkBid=await connect(checkBidQuery)
 
 	//check if the item have the good status
-	console.log(checkBid)
+
 	if(checkBid.rows.length>0){
 
 		try{
