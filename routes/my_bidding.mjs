@@ -1,6 +1,7 @@
 import express from 'express'
 import connect from '../helpers/db.mjs'
 import {DateTime} from 'luxon'
+import {authentication} from '../helpers/controllers.mjs'
 
 const router=express.Router()
 
@@ -53,7 +54,6 @@ router.get('/:user_id',async (req,res)=>{
 			else {
 				previous=j-1
 				break
-
 			}
 		}
 		actual=previous+1
@@ -63,8 +63,6 @@ router.get('/:user_id',async (req,res)=>{
 			bid_information : bidData,
 			item_information : dataItem.rows[0]}
 	}
-
-		
 		res.status(200).json(allData)
 
 	}

@@ -22,10 +22,10 @@ export const authentication=(req,res,next)=>{
 			jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,(err,user)=>{
 			if (err) return res.sendStatus(401)
 				else 
-
-			user_id=(user.id)
+			
+			user_id=(user)
 			res.locals.user_id=user_id
-
+		
 			next()
 
 		})
