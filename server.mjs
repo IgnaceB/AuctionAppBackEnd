@@ -32,12 +32,7 @@ app.use('/my_bidding',biddingRoutes)
 app.use('/my_auction',auctionRoutes)
 app.use('/chat',chatRoutes)
 
-app.get("/", async (req, res)=>{
-	console.log("ca route")
-	const response = await connect("select *from users")
-	console.log(response.rows)
-	res.status(200).json(response.rows)
-})
+
 
 app.listen(PORT,()=>{
 	console.log(`API running on port ${PORT}`)
