@@ -23,9 +23,10 @@ router.get('/:user_id', async (req,res)=>{
 	}
 })
 
-router.patch('/',async (req,res)=>{
+//update data of the user
+router.patch('/', authentication, async (req,res)=>{
 	//retrieve the new information and the id of the user
-	const idUser=req.body.user_id
+	const idUser=req.locals.user_id
 
 
 	const data={

@@ -95,9 +95,9 @@ router.get('/payment/:user_id',async (req,res)=>{
 })
 
 //update status of an item -> payed
-router.post('/payment',async (req,res)=>{
+router.post('/payment',authentication, async (req,res)=>{
 	//retrieve the id of the user and the id of the item 
-	const currentUser=req.body.user_id
+	const currentUser=res.locals/user_id
 	const currentItem=req.body.item_id
 
 	//check if the bid exists 
