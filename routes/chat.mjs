@@ -13,11 +13,12 @@ router.get('/:lobby_id',async (req,res)=>{
 
 		const chatQuery = `select *from chat where id_lobby=${idLobby}`
 		const chat=await connect(chatQuery)
-		console.log(chat)
-		res.status(200).json(chat.rows)}
+
+		res.status(200).json(chat.rows)
+}
 		catch(err){
 			
-			res.send(404).json({message : err})
+			res.status(404).json({message : err})
 		}
 	})
 
@@ -37,7 +38,7 @@ router.post('/',authentication, async (req,res)=>{
 	}
 	catch(err){
 		
-		res.send(404).json({message:err})
+		res.status(404).json({message:err})
 	}
 })
 
