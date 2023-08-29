@@ -100,9 +100,11 @@ router.post('/payment',authentication, async (req,res)=>{
 	const currentUser=res.locals.user_id
 	const currentItem=req.body.item_id
 
-	//check if the bid exists 
+	//check if the bid exists and is the higher on this item
 
-	const checkBidQuery=`select *from bid where id_bidder='${currentUser}' and id_item='${currentItem}'`
+	const checkBidQuery=`select *from bid where id_bidder='${currentUser}' and id_item='${currentItem}'
+	and amount=(select max(amount) from bid as max_bid where bid.id_item=max_bid.id_item)
+	and 2=(select status from items where items.id=bid.id_item) `
 	const checkBid=await connect(checkBidQuery)
 
 	//check if the item have the good status

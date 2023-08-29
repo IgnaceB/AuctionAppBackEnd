@@ -16,7 +16,7 @@ router.get('/:lobby_id',async (req,res)=>{
 		console.log(chat)
 		res.status(200).json(chat.rows)}
 		catch(err){
-			throw err
+			
 			res.send(404).json({message : err})
 		}
 	})
@@ -36,7 +36,7 @@ router.post('/',authentication, async (req,res)=>{
 		res.status(201).json({message:'message succsefully sent'})
 	}
 	catch(err){
-		throw(err)
+		
 		res.send(404).json({message:err})
 	}
 })
