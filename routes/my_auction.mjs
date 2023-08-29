@@ -50,16 +50,18 @@ router.post('/',async (req,res)=>{
 		const getItemID= await connect(getItemIdQuery)
 
 		//creating one entry for each tag in the bodyData.tag array in the table items_tags
-		
+		if(bodyData.tags){
 		for (let i=0;i<bodyData.tags.length;i++){
 			const createEntryQuery=`insert into items_tags (id_item, tag) VALUES ('${getItemID.rows[0]["id"]}','${bodyData.tags[i]}')`
 			const createEntry = await connect(createEntryQuery)
-		}
+		}}
+
 		//creating one entry for each picture in the bodyData.pictures array in the table items_pictures
+		if (bodyData.pictures){
 		for (let i=0;i<bodyData.pictures.length;i++){
 			const createEntryQuery=`insert into items_pictures (id_item, link) VALUES ('${getItemID.rows[0]["id"]}','${bodyData.pictures[i]}')`
 			const createEntry = await connect(createEntryQuery)
-		}
+		}}
 		res.status(200).json({message : `item added`})
 	}
 	catch(err){
