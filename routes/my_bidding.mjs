@@ -13,14 +13,15 @@ router.get('/:user_id',async (req,res)=>{
 		const currentUser=req.params.user_id
 
 	//retrieve data from the bid table, item table, and lobby table
+		console.log(currentUser)
 		const bidQuery = `select *,(select max(amount) from bid 
-		as max_bid where max_bid.id_item = bid.id_item group by id_item ) as max_amount,
+		as max_bid where max_bid.id_item = bid.id_item) as max_amount,
 		(select count (distinct id_item) from bid where id_bidder=${currentUser}) as nr_items
 		from bid 
 		where id_bidder='${currentUser}'
 		order by bid.id_item desc`
 		const dataBid= await connect(bidQuery)
-		
+		console.log(dataBid.rows)
 		//setting up out of scope the container of all the informations
 		let allData = []
 		let previous=-1
