@@ -128,9 +128,9 @@ router.post('/bid',async (req,res)=>{
 
 	//update data on table bid
 		try{
-			//delete previous bid
-			const deleteQuery = `delete from bid where id_bidder=${user_id} and id_item=${findItem.rows[0]["id"]}`
-			const deletePreviousBid = await connect(deleteQuery)
+			//delete previous bid -- remove ask by louis
+			/*const deleteQuery = `delete from bid where id_bidder=${user_id} and id_item=${findItem.rows[0]["id"]}`
+			const deletePreviousBid = await connect(deleteQuery)*/
 
 			//insert new bid
 			const bidQuery = `insert into bid (id_bidder,id_item,created_at,amount) values 

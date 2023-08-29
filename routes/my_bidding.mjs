@@ -12,27 +12,56 @@ router.get('/:user_id',async (req,res)=>{
 		const currentUser=req.params.user_id
 
 	//retrieve data from the bid table, item table, and lobby table
-		const bidQuery = `select * from bid
-		 where id_bidder='${currentUser}' order by bid.id desc`
+		const bidQuery = `select *,(select max(amount) from bid 
+		as max_bid where max_bid.id_item = bid.id_item group by id_item ) as max_amount,
+		(select count (distinct id_item) from bid where id_bidder=${currentUser}) as nr_items
+		from bid 
+		where id_bidder='${currentUser}'
+		order by bid.id_item desc`
 		const dataBid= await connect(bidQuery)
 		
 		//setting up out of scope the container of all the informations
 		let allData = []
-
+		let previous=-1
+		let actual=0
+		let next=1
+		console.log(dataBid.rows[0].nr_items)
+		console.log(`length : ${dataBid.rows.length}`)
 		//looping on the number of bidded item, to associate correct lobby and items to each bid
-		for (let i=0;i<dataBid.rows.length;i++){
-		const itemQuery= `select * from items 
-		where id=${dataBid.rows[i]["id_item"]}`
+		for (let i=0;i<dataBid.rows[0].nr_items;i++){
+		let bidData=[]
+		const itemQuery= `select 
+		items.id as id_item,
+		items.id_seller as id_seller,
+		items.name as item_name,
+		items.status as item_status,
+		items.cover_lobby as cover_lobby,
+		lobby.id as id_lobby,
+		lobby.end_at as lobby_end_at
+		from items 
+		left join lobby on lobby.id_item=items.id
+		where items.id=${dataBid.rows[actual]["id_item"]}`
+		
 		const dataItem=await connect(itemQuery)
+		bidData.push(dataBid.rows[actual])
 
-		const lobbyQuery= `select *from lobby
-		where id_item=${dataBid.rows[i]["id_item"]}`
-		const dataLobby=await connect(lobbyQuery)
+		for (let j=next; j<dataBid.rows.length;j++){
+		
+			if (dataBid.rows[j].id_item==dataBid.rows[actual].id_item){	
+				bidData.push(dataBid.rows[j])
+			}
+			else {
+				previous=j-1
+				break
+
+			}
+		}
+		actual=previous+1
+		next=previous+2
 
 		allData[i]={
-			bid_information : dataBid.rows[i],
-			item_information : dataItem.rows[0],
-			lobby_information : dataLobby.rows[0]}
+			bid_information : bidData,
+			item_information : dataItem.rows[0]}
 	}
 
 		
