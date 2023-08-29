@@ -1,6 +1,7 @@
 import express from 'express'
 import connect from '../helpers/db.mjs'
 import {DateTime} from 'luxon'
+import {authentication} from '../helpers/controllers.mjs'
 
 const router=express.Router()
 
@@ -24,9 +25,10 @@ router.get('/:user_id',async (req,res)=>{
 })
 
 //create new item in the items table
-router.post('/',async (req,res)=>{
+router.post('/',authentication,async (req,res)=>{
+	console.log(res.locals.user_id)
 	const bodyData={
-		id_seller : req.body.user_id,
+		id_seller : res.locals.user_id,
 		itemName : req.body.itemName,
 		auctionStart : req.body.auctionStart,
 		auctionDuration : req.body.auctionDuration,
