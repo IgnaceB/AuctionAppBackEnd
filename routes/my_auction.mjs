@@ -12,7 +12,7 @@ router.get('/:user_id',async (req,res)=>{
 		const currentUser=req.params.user_id
 
 	//retrieve data from the items table
-		const userQuery = `select *from items where id_seller='${currentUser}'`
+		const userQuery = `select *from items where id_seller='${currentUser} '`
 		const dataUser= await connect(userQuery)
 
 		res.status(200).json(dataUser.rows)
