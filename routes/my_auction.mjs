@@ -13,7 +13,9 @@ router.get('/:user_id',async (req,res)=>{
 		const currentUser=req.params.user_id
 
 	//retrieve data from the items table
-		const userQuery = `select *from items where id_seller='${currentUser} '`
+		const userQuery = `select *, (select max(amount) from bid 
+		as max_bid where max_bid.id_item = items.id group by id_item ) as max_amount
+		from items where id_seller='${currentUser} '`
 		const dataUser= await connect(userQuery)
 
 		res.status(200).json(dataUser.rows)
@@ -26,7 +28,7 @@ router.get('/:user_id',async (req,res)=>{
 
 //create new item in the items table
 router.post('/',authentication,async (req,res)=>{
-	console.log(res.locals.user_id)
+	
 	const bodyData={
 		id_seller : res.locals.user_id,
 		itemName : req.body.itemName,
@@ -71,7 +73,7 @@ router.post('/',authentication,async (req,res)=>{
 		res.status(404).json({message:err})
 	}})
 
-router.patch('/',async (req,res)=>{
+router.patch('/',authentication, async (req,res)=>{
 	
 	const bodyData={
 		name : req.body.newItemName,
@@ -81,7 +83,7 @@ router.patch('/',async (req,res)=>{
 		cover_lobby : req.body.newCoverLobby
 	}
 
-	const idUser=req.body.user_id
+	const idUser=res.locals.user_id
 	const idItem=req.body.item_id
 	let now = DateTime.now().valueOf()
 
@@ -95,8 +97,7 @@ router.patch('/',async (req,res)=>{
 		// verification if the auction didn't start yet
 		const timeQuery = `select auction_start from items where id=${idItem} `
 		const timeRequest = await connect(timeQuery)
-		console.log(timeRequest.rows[0].auction_start)
-		console.log(now)
+	
 		if (timeRequest.rows[0].auction_start.valueOf()>now){
 			
 
@@ -122,7 +123,7 @@ router.patch('/',async (req,res)=>{
 					queryUpdateItem+=' '+array[i]+', '
 				}
 			}
-			console.log(queryUpdateItem)
+			
 
 			try{
 				const updateItem= await connect(queryUpdateItem)
@@ -142,10 +143,10 @@ router.patch('/',async (req,res)=>{
 	}
 })
 
-router.patch('/pictures',async (req,res)=>{
+router.patch('/pictures',authentication, async (req,res)=>{
 	
 	const newPictures = req.body.newPictures
-	const idUser=req.body.user_id
+	const idUser=res.locals.user_id
 	const idItem=req.body.item_id
 	let now = DateTime.now().valueOf()
 
@@ -189,10 +190,10 @@ router.patch('/pictures',async (req,res)=>{
 	}
 })
 
-router.patch('/tags',async (req,res)=>{
+router.patch('/tags',authentication, async (req,res)=>{
 	
 	const newTags = req.body.newTags
-	const idUser=req.body.user_id
+	const idUser=res.locals.user_id
 	const idItem=req.body.item_id
 	let now = DateTime.now().valueOf()
 
@@ -236,10 +237,10 @@ router.patch('/tags',async (req,res)=>{
 	}
 })
 
-router.delete('/',async (req,res)=>{
+router.delete('/',authentication, async (req,res)=>{
 	
 
-	const idUser=req.body.user_id
+	const idUser=res.locals.user_id
 	const idItem=req.body.item_id
 	let now = DateTime.now().valueOf()
 

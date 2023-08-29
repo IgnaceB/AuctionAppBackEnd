@@ -22,9 +22,9 @@ router.get('/:lobby_id',async (req,res)=>{
 	})
 
 //post a message inside a lobby
-router.post('/',async (req,res)=>{
+router.post('/',authentication, async (req,res)=>{
 	try{
-		const idUser = req.body.user_id
+		const idUser = res.locals.user_id
 		const idLobby = req.body.lobby_id
 		const message= req.body.message
 

@@ -109,10 +109,10 @@ router.get('/:lobby_id',async (req,res)=>{
 	}
 })
 
-router.post('/bid',async (req,res)=>{
+router.post('/bid',authentication, async (req,res)=>{
 	//retrieve bid information
 	const bidAmount = req.body.bidAmount
-	const user_id = req.body.user_id
+	const user_id = res.locals.user_id
 	const lobby_id = req.body.lobby_id
 	const date=DateTime.now().toSQL()
 
@@ -151,9 +151,9 @@ router.post('/bid',async (req,res)=>{
 	}
 })
 
-router.post('/like',async(req,res)=>{
+router.post('/like',authentication, async(req,res)=>{
 	//retrieve like informations
-	const user_id=req.body.user_id
+	const user_id=res.locals.user_id
 	const lobby_id=req.body.lobby_id
 
 	// verify if this is the first like on this lobby by this user
@@ -176,9 +176,9 @@ router.post('/like',async(req,res)=>{
 	}
 })
 
-router.delete('/like',async(req,res)=>{
+router.delete('/like',authentication, async(req,res)=>{
 	//retrieve like informations
-	const user_id=req.body.user_id
+	const user_id=res.locals.user_id
 	const lobby_id=req.body.lobby_id
 
 	// delete the line if exist
