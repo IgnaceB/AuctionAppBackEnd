@@ -27,8 +27,8 @@ router.get('/init/:lobby_id',async (req,res)=>{
 		const seller =await connect(sellerQuery)
 
 		//retrieve data from chat 
-		const chatQuery=`select chat.user_id, chat.message, users.avatar, users.username, chat.created_at 
-		from chat inner join users on chat.user_id=users.id
+		const chatQuery=`select chat.id_user, chat.message, users.avatar, users.username, chat.created_at 
+		from chat inner join users on chat.id_user=users.id
 		where id_lobby=${currentLobby}`
 		const chat =await connect(chatQuery)
 
