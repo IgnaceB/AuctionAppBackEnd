@@ -11,7 +11,8 @@ router.get('/:lobby_id',async (req,res)=>{
 	try {
 		const idLobby = req.params.lobby_id
 
-		const chatQuery = `select *from chat where id_lobby=${idLobby}`
+		const chatQuery = `select chat.id_user, chat.message, users.avatar, users.username, chat.created_at from chat inner join users on chat.id_user=users.id
+		where id_lobby=${idLobby}`
 		const chat=await connect(chatQuery)
 
 		res.status(200).json(chat.rows)
