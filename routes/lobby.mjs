@@ -37,15 +37,16 @@ router.get('/init/:lobby_id',async (req,res)=>{
 		const tags = await connect(tagsQuery)
 
 		res.status(200).json({
-			lobby : lobby.rows,
-			item : item.rows,
+			lobby : lobby.rows[0],
+			item : item.rows[0],
 			pictures : pictures.rows,
-			seller : seller.rows,
+			seller : seller.rows[0],
 			chat : chat.rows,
 			tags : tags.rows
 		})
 
 	}
+
 	catch(err){
 		console.log(err)
 		res.status(404).json({message:'connection error, contact webmaster'})
