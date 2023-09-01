@@ -1,5 +1,5 @@
 import express from 'express'
-import connect from '../helpers/db.mjs'
+import pool from '../helpers/db.mjs'
 import {DateTime} from 'luxon'
 
 const router=express.Router()
@@ -14,7 +14,7 @@ router.get('/:user_id', async (req,res)=>{
 
 	//retrieve data from the users table
 		const userQuery = `select *from users where id='${currentUser}'`
-		const dataUser= await connect(userQuery)
+		const dataUser= await pool.query(userQuery)
 		res.status(200).json(dataUser.rows)
 	}
 	catch(err){
@@ -64,7 +64,7 @@ router.patch('/', authentication, async (req,res)=>{
 	
 	try{
 		//update using the string queryUser
-		const updateUser = await connect(queryUser)
+		const updateUser = await pool.query(queryUser)
 		res.status(200).json({message:'user correctly udpated'})
 	}
 	catch(err){
@@ -78,7 +78,7 @@ router.get('/like/:user_id',async(req,res)=>{
 		const userId=req.params.user_id
 
 		const searchLikeQuery = `select id_lobby from likes_to_users where id_user=${userId}`
-		const searchLike = await connect(searchLikeQuery)
+		const searchLike = await pool.query(searchLikeQuery)
 
 		res.status(201).json(searchLike.rows)
 	}

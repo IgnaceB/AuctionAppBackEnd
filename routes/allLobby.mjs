@@ -1,5 +1,5 @@
 import express from 'express'
-import connect from '../helpers/db.mjs'
+import pool from '../helpers/db.mjs'
 
 import {authentication} from '../helpers/controllers.mjs'
 
@@ -14,7 +14,7 @@ router.get('/',async (req,res)=>{
 
 	//retrieve data from db from startSearch to startSearch+nrEntity
 		const lobbyQuery = `select *from lobby `
-		const dataLobby= await connect(lobbyQuery)
+		const dataLobby= await pool.query(lobbyQuery)
 
 		res.status(200).json(dataLobby.rows)
 	}
@@ -35,7 +35,7 @@ router.get('/:page',async (req,res)=>{
 
 	//retrieve data from db from startSearch to startSearch+nrEntity
 		const lobbyQuery = `select *from lobby order by end_at asc offset ${startSearch} limit ${nrEntity}`
-		const dataLobby= await connect(lobbyQuery)
+		const dataLobby= await pool.query(lobbyQuery)
 
 		res.status(200).json(dataLobby.rows)
 	}
@@ -59,7 +59,7 @@ router.get('/tendance/:page',async (req,res)=>{
 		+ (select count (id) as countchat from chat where chat.id_lobby=lobby.id)) as mycount 
 		from lobby order by mycount desc offset ${startSearch} limit ${nrEntity}`
 
-		const countTendance=await connect(countQuery)
+		const countTendance=await pool.query(countQuery)
 		res.status(201).json(countTendance.rows)			
 	}
 	
@@ -90,7 +90,7 @@ router.post('/tags',async (req,res)=>{
 		}
 //retrieve data from db from startSearch to startSearch+nrEntity
 	
-		const dataLobby= await connect(researchQuery)
+		const dataLobby= await pool.query(researchQuery)
 
 		res.status(200).json(dataLobby.rows)
 	}
@@ -134,7 +134,7 @@ router.post('/tags/:page',async (req,res)=>{
 		console.log(researchQuery)
 			//retrieve data from db from startSearch to startSearch+nrEntity
 	
-		const dataLobby= await connect(researchQuery)
+		const dataLobby= await pool.query(researchQuery)
 
 		res.status(200).json(dataLobby.rows)
 	}

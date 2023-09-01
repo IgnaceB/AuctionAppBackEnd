@@ -1,5 +1,5 @@
 import express from 'express'
-import connect from '../helpers/db.mjs'
+import pool from '../helpers/db.mjs'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import {authentication} from '../helpers/controllers.mjs'
@@ -13,13 +13,13 @@ router.post('/login',async(req,res)=>{
 	const userPassword=req.body.password
 
 	//Retrieve id and check if an entry exist in the users table for this email
-	const usersData= await connect(`select id from users where email='${userEmail}'`)
+	const usersData= await pool.query(`select id from users where email='${userEmail}'`)
 	console.log(usersData.rows[0])
 
 	if(usersData.rows.length>0){
 		//Retrieve crypted password from the login table using the users.id
 
-		const loginData=await connect(`select password from login where id_user='${usersData.rows[0]["id"]}'`)
+		const loginData=await pool.query(`select password from login where id_user='${usersData.rows[0]["id"]}'`)
 		
 		//check crypted password with introduce password
 		const checkPassword= await bcrypt.compare(userPassword, loginData.rows[0]["password"])
@@ -61,7 +61,7 @@ router.post('/signup',async(req,res)=>{
 	const salt = await bcrypt.genSalt(10)
 	const hashPassword= await bcrypt.hash(password, salt)
 	// verify if the user exist
-	const checkEmail= await connect(`select *from users where email='${email}'`)
+	const checkEmail= await pool.query(`select *from users where email='${email}'`)
 
 	if(checkEmail.rows[0]){
 		
@@ -72,15 +72,15 @@ router.post('/signup',async(req,res)=>{
 		//update table user with the data provided
 			const queryUser=`insert into users (email, name, phone, address, adress_nr, box, avatar, username)
 			VALUES ('${email}','${name}','${phone}','${address}','${adress_nr}','${box}','${avatar}','${username}')`
-			const createUser = await connect(queryUser)
+			const createUser = await pool.query(queryUser)
 
 		//retrieve id of the just created user
-			const idUser=await connect(`select id from users where email='${email}'`)
+			const idUser=await pool.query(`select id from users where email='${email}'`)
 
 		//update table login with id and crypted password 
 			const queryLogin=`insert into login (id_user,password) VALUES
 			('${idUser.rows[0]["id"]}','${hashPassword}')`
-			const createLogin=await connect(queryLogin)
+			const createLogin=await pool.query(queryLogin)
 
 			return res.status(201).json({message : "user successfully created"})
 		}

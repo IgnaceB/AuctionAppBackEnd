@@ -1,5 +1,5 @@
 import express from 'express'
-import connect from '../helpers/db.mjs'
+import pool from '../helpers/db.mjs'
 import {authentication} from '../helpers/controllers.mjs'
 
 const router=express.Router()
@@ -11,7 +11,7 @@ router.get('/',async (req,res)=>{
 
 	//retrieve data from db from startSearch to startSearch+nrEntity
 		const itemsQuery = `select *from items`
-		const dataItems= await connect(itemsQuery)
+		const dataItems= await pool.query(itemsQuery)
 
 		res.status(200).json(dataItems.rows)
 	}
@@ -30,7 +30,7 @@ router.get('/:page',async (req,res)=>{
 
 	//retrieve data from db from startSearch to startSearch+nrEntity
 		const itemsQuery = `select *from items order by id offset ${startSearch} limit ${nrEntity}`
-		const dataItems= await connect(itemsQuery)
+		const dataItems= await pool.query(itemsQuery)
 
 		res.status(200).json(dataItems.rows)
 	}
@@ -49,7 +49,7 @@ router.get('/sold/:page',async (req,res)=>{
 
 	//retrieve data from db from startSearch to startSearch+nrEntity
 		const itemsQuery = `select *from items where status='3' order by id offset ${startSearch} limit ${nrEntity}`
-		const dataItems= await connect(itemsQuery)
+		const dataItems= await pool.query(itemsQuery)
 
 		res.status(200).json(dataItems.rows)
 	}

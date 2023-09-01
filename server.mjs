@@ -62,8 +62,8 @@ const callback=async ()=>{
 					connections : respons4.rows[0]
 				})
 }
-setInterval(callback,40)
-setInterval(callback2,5)
+/*setInterval(callback,40)
+setInterval(callback2,5)*/
 
 
 app.listen(PORT,()=>{
