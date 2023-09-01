@@ -1,7 +1,20 @@
 import pg from 'pg'
 const {Client}=pg
+const {Pool}=pg
+
 import dotenv from 'dotenv'
 dotenv.config()
+
+
+const pool = new Pool({
+	user: process.env.user,
+	host: process.env.host,
+	database: process.env.database,
+	password: process.env.password,
+	port: process.env.port,
+	max:70,
+})
+
 
 
 
@@ -25,4 +38,5 @@ const connection = async (myQuery)=>{
 
 }
 
-export default connection
+/*export {connection as default, pool as pool} */
+export default pool

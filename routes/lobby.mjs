@@ -195,7 +195,7 @@ router.delete('/like',authentication, async(req,res)=>{
 	const deleteLike= await connect(deleteLikeQuery)
 
 	//decrease the like amount of the lobby
-	const decreaseLikeQuery=`update lobby set likes=likes+1`
+	const decreaseLikeQuery=`update lobby set likes=likes-1`
 	const decreaseLike=await connect(decreaseLikeQuery)
 
 	res.status(201).json({message : 'like successfully removed'})
