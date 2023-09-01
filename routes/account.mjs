@@ -13,8 +13,9 @@ router.get('/:user_id', async (req,res)=>{
 		const currentUser=req.params.user_id
 
 	//retrieve data from the users table
-		const userQuery = `select *from users where id='${currentUser}'`
-		const dataUser= await pool.query(userQuery)
+		const userQuery = `select *from users where id=$1`
+		const userValues=[currentUser]
+		const dataUser= await pool.query(userQuery,userValues)
 		res.status(200).json(dataUser.rows)
 	}
 	catch(err){
@@ -55,7 +56,7 @@ router.patch('/', authentication, async (req,res)=>{
 	for (let i=0;i<array.length;i++){
 		//filter on the last element of the array to remove ',' and add the end of request 
 		if (i==array.length-1){
-			queryUser+=array[i]+` where id=${idUser}`
+			queryUser+=array[i]+` where id=$1`
 		}
 		else {
 			queryUser+=' '+array[i]+', '
@@ -64,7 +65,8 @@ router.patch('/', authentication, async (req,res)=>{
 	
 	try{
 		//update using the string queryUser
-		const updateUser = await pool.query(queryUser)
+		const values=[idUser]
+		const updateUser = await pool.query(queryUser,values)
 		res.status(200).json({message:'user correctly udpated'})
 	}
 	catch(err){
@@ -76,9 +78,9 @@ router.patch('/', authentication, async (req,res)=>{
 router.get('/like/:user_id',async(req,res)=>{
 	try{
 		const userId=req.params.user_id
-
-		const searchLikeQuery = `select id_lobby from likes_to_users where id_user=${userId}`
-		const searchLike = await pool.query(searchLikeQuery)
+		const values=[userId]
+		const searchLikeQuery = `select id_lobby from likes_to_users where id_user=$1`
+		const searchLike = await pool.query(searchLikeQuery,values)
 
 		res.status(201).json(searchLike.rows)
 	}

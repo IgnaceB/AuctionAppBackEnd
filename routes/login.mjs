@@ -13,13 +13,13 @@ router.post('/login',async(req,res)=>{
 	const userPassword=req.body.password
 
 	//Retrieve id and check if an entry exist in the users table for this email
-	const usersData= await pool.query(`select id from users where email='${userEmail}'`)
-	console.log(usersData.rows[0])
+	const usersData= await pool.query(`select id from users where email=$1`,[userEmail])
+	
 
 	if(usersData.rows.length>0){
 		//Retrieve crypted password from the login table using the users.id
 
-		const loginData=await pool.query(`select password from login where id_user='${usersData.rows[0]["id"]}'`)
+		const loginData=await pool.query(`select password from login where id_user=$1`,[usersData.rows[0]["id"]])
 		
 		//check crypted password with introduce password
 		const checkPassword= await bcrypt.compare(userPassword, loginData.rows[0]["password"])
@@ -61,7 +61,7 @@ router.post('/signup',async(req,res)=>{
 	const salt = await bcrypt.genSalt(10)
 	const hashPassword= await bcrypt.hash(password, salt)
 	// verify if the user exist
-	const checkEmail= await pool.query(`select *from users where email='${email}'`)
+	const checkEmail= await pool.query(`select *from users where email=$1`,[email])
 
 	if(checkEmail.rows[0]){
 		
@@ -71,16 +71,16 @@ router.post('/signup',async(req,res)=>{
 		try {
 		//update table user with the data provided
 			const queryUser=`insert into users (email, name, phone, address, adress_nr, box, avatar, username)
-			VALUES ('${email}','${name}','${phone}','${address}','${adress_nr}','${box}','${avatar}','${username}')`
-			const createUser = await pool.query(queryUser)
+			VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`
+			const createUser = await pool.query(queryUser,[email, name, phone, address,adress_nr,box,avatar,username])
 
 		//retrieve id of the just created user
-			const idUser=await pool.query(`select id from users where email='${email}'`)
+			const idUser=await pool.query(`select id from users where email=$1`,[email])
 
 		//update table login with id and crypted password 
 			const queryLogin=`insert into login (id_user,password) VALUES
-			('${idUser.rows[0]["id"]}','${hashPassword}')`
-			const createLogin=await pool.query(queryLogin)
+			($1,$2)`
+			const createLogin=await pool.query(queryLogin,[idUser.rows[0]["id"],hashPassword])
 
 			return res.status(201).json({message : "user successfully created"})
 		}
