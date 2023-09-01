@@ -82,7 +82,7 @@ router.get('/update_lobby/:lobby_id',async (req,res)=>{
 	//retrieve the id of the lobby
 	try{
 		const currentLobby=req.params.lobby_id
-		let values=currentLobby
+		let values=[currentLobby]
 	//retrieve data from : 
 		// lobby -> id_item + likes
 		// chat -> new messages
