@@ -104,7 +104,7 @@ router.get('/:lobby_id',async (req,res)=>{
 	//retrieve the id of the lobby
 	try{
 		const currentLobby=req.params.lobby_id
-		let values = currentLobby
+		let values = [currentLobby]
 	//retrieve data from the lobby_id
 		const lobbyQuery = `select *from lobby where id=$1`
 		const dataLobby= await pool.query(lobbyQuery,values)
