@@ -1,5 +1,5 @@
 import express from 'express'
-import connect from '../helpers/db.mjs'
+import pool from '../helpers/db.mjs'
 import {DateTime} from 'luxon'
 import {authentication} from '../helpers/controllers.mjs'
 
@@ -16,7 +16,7 @@ router.get('/:user_id',async (req,res)=>{
 		const userQuery = `select *, (select max(amount) from bid 
 		as max_bid where max_bid.id_item = items.id group by id_item ) as max_amount
 		from items where id_seller='${currentUser} '`
-		const dataUser= await connect(userQuery)
+		const dataUser= await pool.query(userQuery)
 
 		res.status(200).json(dataUser.rows)
 	}
@@ -45,26 +45,26 @@ router.post('/',authentication,async (req,res)=>{
 		//create the item in the item table
 		const createItemQuery=`insert into items (id_seller, name, auction_start, auction_duration, description, cover_lobby, created_at, status)
 		VALUES ('${bodyData.id_seller}','${bodyData.itemName}','${bodyData.auctionStart}','${bodyData.auctionDuration}','${bodyData.itemDescription}','${bodyData.coverLobby}','${now}','0')`
-		const createItem= await connect(createItemQuery)
+		const createItem= await pool.query(createItemQuery)
 		
 
 		//retrieve id of just created item
 
 		const getItemIdQuery=`select *from items where id_seller=${bodyData.id_seller} order by id desc limit 1`
-		const getItemID= await connect(getItemIdQuery)
+		const getItemID= await pool.query(getItemIdQuery)
 
 		//creating one entry for each tag in the bodyData.tag array in the table items_tags
 		if(bodyData.tags){
 		for (let i=0;i<bodyData.tags.length;i++){
 			const createEntryQuery=`insert into items_tags (id_item, tag) VALUES ('${getItemID.rows[0]["id"]}','${bodyData.tags[i]}')`
-			const createEntry = await connect(createEntryQuery)
+			const createEntry = await pool.query(createEntryQuery)
 		}}
 
 		//creating one entry for each picture in the bodyData.pictures array in the table items_pictures
 		if (bodyData.pictures){
 		for (let i=0;i<bodyData.pictures.length;i++){
 			const createEntryQuery=`insert into items_pictures (id_item, link) VALUES ('${getItemID.rows[0]["id"]}','${bodyData.pictures[i]}')`
-			const createEntry = await connect(createEntryQuery)
+			const createEntry = await pool.query(createEntryQuery)
 		}}
 		res.status(200).json({message : `item added`})
 	}
@@ -90,13 +90,13 @@ router.patch('/',authentication, async (req,res)=>{
     //verification if the user is the seller on the items table 
 
 	const verifQuery=`select *from items where id_seller=${idUser} and id=${idItem}`
-	const verification = await connect(verifQuery)
+	const verification = await pool.query(verifQuery)
 
 	if (verification.rows.length>0){
 
 		// verification if the auction didn't start yet
 		const timeQuery = `select auction_start from items where id=${idItem} `
-		const timeRequest = await connect(timeQuery)
+		const timeRequest = await pool.query(timeQuery)
 	
 		if (timeRequest.rows[0].auction_start.valueOf()>now){
 			
@@ -126,7 +126,7 @@ router.patch('/',authentication, async (req,res)=>{
 			
 
 			try{
-				const updateItem= await connect(queryUpdateItem)
+				const updateItem= await pool.query(queryUpdateItem)
 				res.status(200).json({message : 'item updated'})
 			}
 			catch(err){
@@ -153,24 +153,24 @@ router.patch('/pictures',authentication, async (req,res)=>{
     //verification if the user is the seller on the items table 
 
 	const verifQuery=`select *from items where id_seller=${idUser} and id=${idItem}`
-	const verification = await connect(verifQuery)
+	const verification = await pool.query(verifQuery)
 
 	if (verification.rows.length>0){
 
 		// verification if the auction didn't start yet
 		const timeQuery = `select auction_start from items where id=${idItem} `
-		const timeRequest = await connect(timeQuery)
+		const timeRequest = await pool.query(timeQuery)
 	
 		if (timeRequest.rows[0].auction_start.valueOf()>now){
 				try{
 				//delete previous pictures
 				const queryDeletePictures=`delete from items_pictures where id_item=${idItem}`
-				const deletePictures= await connect(queryDeletePictures)
+				const deletePictures= await pool.query(queryDeletePictures)
 
 				//looping on the number of added pictures and creating a line in the table items_pictures
 				newPictures.forEach(async(element)=>{
 					const queryUpdatePictures=`insert into items_pictures (id_item, link) VALUES ('${idItem}','${element}')`
-					const updatePictures= await connect(queryUpdatePictures)
+					const updatePictures= await pool.query(queryUpdatePictures)
 				})
 				
 				res.status(200).json({message : 'pictures updated'})
@@ -200,24 +200,24 @@ router.patch('/tags',authentication, async (req,res)=>{
     //verification if the user is the seller on the items table 
 
 	const verifQuery=`select *from items where id_seller=${idUser} and id=${idItem}`
-	const verification = await connect(verifQuery)
+	const verification = await pool.query(verifQuery)
 
 	if (verification.rows.length>0){
 
 		// verification if the auction didn't start yet
 		const timeQuery = `select auction_start from items where id=${idItem} `
-		const timeRequest = await connect(timeQuery)
+		const timeRequest = await pool.query(timeQuery)
 	
 		if (timeRequest.rows[0].auction_start.valueOf()>now){
 				try{
 				//delete previous Tags
 				const queryDeleteTags=`delete from items_tags where id_item=${idItem}`
-				const deleteTags= await connect(queryDeleteTags)
+				const deleteTags= await pool.query(queryDeleteTags)
 
 				//looping on the number of added Tags and creating a line in the table items_Tags
 				newTags.forEach(async(element)=>{
 					const queryUpdateTags=`insert into items_tags (id_item, tag) VALUES ('${idItem}','${element}')`
-					const updateTags= await connect(queryUpdateTags)
+					const updateTags= await pool.query(queryUpdateTags)
 				})
 				
 				res.status(200).json({message : 'tags updated'})
@@ -247,13 +247,13 @@ router.delete('/',authentication, async (req,res)=>{
     //verification if the user is the seller on the items table 
 
 	const verifQuery=`select *from items where id_seller=${idUser} and id=${idItem}`
-	const verification = await connect(verifQuery)
+	const verification = await pool.query(verifQuery)
 
 	if (verification.rows.length>0){
 
 		// verification if the auction didn't start yet
 		const timeQuery = `select auction_start from items where id=${idItem} `
-		const timeRequest = await connect(timeQuery)
+		const timeRequest = await pool.query(timeQuery)
 
 		if (timeRequest.rows[0].auction_start>now){
 			
@@ -261,15 +261,15 @@ router.delete('/',authentication, async (req,res)=>{
 
 				//delete entry on pictures table
 				const deletePicQuery = `delete from items_pictures where id_item=${idItem}`
-				const deletePicture = await connect (deletePicQuery)
+				const deletePicture = await pool.query (deletePicQuery)
 
 				//delete entry on tags table
 				const deleteTagsQuery = `delete from items_tags where id_item=${idItem}`
-				const deleteTags = await connect (deleteTagsQuery)
+				const deleteTags = await pool.query (deleteTagsQuery)
 
 				//delete entry on item table
 				const deleteQuery = `delete from items where id=${idItem}`
-				const deleteItem= await connect(deleteQuery)
+				const deleteItem= await pool.query(deleteQuery)
 
 				res.status(200).json({message : 'item deleted'})
 			}

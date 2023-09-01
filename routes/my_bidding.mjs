@@ -1,5 +1,5 @@
 import express from 'express'
-import connect from '../helpers/db.mjs'
+import pool from '../helpers/db.mjs'
 import {DateTime} from 'luxon'
 import {authentication} from '../helpers/controllers.mjs'
 
@@ -20,7 +20,7 @@ router.get('/:user_id',async (req,res)=>{
 		from bid 
 		where id_bidder='${currentUser}'
 		order by bid.id_item desc`
-		const dataBid= await connect(bidQuery)
+		const dataBid= await pool.query(bidQuery)
 		console.log(dataBid.rows)
 		//setting up out of scope the container of all the informations
 		let allData = []
@@ -44,7 +44,7 @@ router.get('/:user_id',async (req,res)=>{
 		left join lobby on lobby.id_item=items.id
 		where items.id=${dataBid.rows[actual]["id_item"]}`
 		
-		const dataItem=await connect(itemQuery)
+		const dataItem=await pool.query(itemQuery)
 		bidData.push(dataBid.rows[actual])
 
 		for (let j=next; j<dataBid.rows.length;j++){
@@ -84,7 +84,7 @@ router.get('/payment/:user_id',async (req,res)=>{
 		where id_bidder='${currentUser}' and amount in 
 		(select max(amount) from bid as max_bid where max_bid.id_item=bid.id_item group by id_item) 
 		and items.status='2' order by bid.id desc`
-		const dataBid= await connect(bidQuery)
+		const dataBid= await pool.query(bidQuery)
 	
 		res.status(200).json(dataBid.rows)
 
@@ -106,7 +106,7 @@ router.post('/payment',authentication, async (req,res)=>{
 	const checkBidQuery=`select *from bid where id_bidder='${currentUser}' and id_item='${currentItem}'
 	and amount=(select max(amount) from bid as max_bid where bid.id_item=max_bid.id_item)
 	and 2=(select status from items where items.id=bid.id_item) `
-	const checkBid=await connect(checkBidQuery)
+	const checkBid=await pool.query(checkBidQuery)
 
 	//check if the item have the good status
 
@@ -116,7 +116,7 @@ router.post('/payment',authentication, async (req,res)=>{
 
 	//Update status of items -> 3 -> payed
 			const paymentQuery = `update items set status='3' where id='${currentItem}'`
-			const updateStatus= await connect(paymentQuery)
+			const updateStatus= await pool.query(paymentQuery)
 			
 			res.status(200).json({message : 'status updated'})
 		}

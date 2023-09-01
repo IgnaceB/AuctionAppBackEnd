@@ -1,5 +1,5 @@
 import express from 'express'
-import connect from '../helpers/db.mjs'
+import pool from '../helpers/db.mjs'
 import {DateTime} from 'luxon'
 import {authentication} from '../helpers/controllers.mjs'
 
@@ -13,7 +13,7 @@ router.get('/:lobby_id',async (req,res)=>{
 
 		const chatQuery = `select chat.id_user, chat.message, users.avatar, users.username, chat.created_at from chat inner join users on chat.id_user=users.id
 		where id_lobby=${idLobby}`
-		const chat=await connect(chatQuery)
+		const chat=await pool.query(chatQuery)
 
 		res.status(200).json(chat.rows)
 }
@@ -33,7 +33,7 @@ router.post('/',authentication, async (req,res)=>{
 //define sql query, and connect to DB
 		const sendQuery= `insert into chat (id_user, id_lobby, message) VALUES ('${idUser}','${idLobby}','${message}')`
 
-		const sendMessage=await connect(sendQuery)
+		const sendMessage=await pool.query(sendQuery)
 
 		res.status(201).json({message:'message succsefully sent'})
 	}
