@@ -36,7 +36,18 @@ export const authentication=(req,res,next)=>{
 			}
 		}
 	}
-		
+
+export const IdRetriever=(req,res,next)=>{
+
+	const token=req.headers.authentication
+
+	let user_id 
+			jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,(err,user)=>{
+			user_id=(user)
+			res.locals.user_id=user_id
+		})
+		next()
+	}		
 	
 	
 

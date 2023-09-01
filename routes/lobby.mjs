@@ -2,22 +2,26 @@ import express from 'express'
 import pool from '../helpers/db.mjs'
 import {DateTime} from 'luxon'
 import {authentication} from '../helpers/controllers.mjs'
+import {IdRetriever} from '../helpers/controllers.mjs'
 
 const router=express.Router()
 
-router.get('/init/:lobby_id',async (req,res)=>{
+router.get('/init/:lobby_id',IdRetriever, async (req,res)=>{
 	//retrieve the id of the lobby
 	try{
 		const currentLobby=req.params.lobby_id
-
+		const currentUser =res.locals.user_id
+		
 	//retrieve data from the lobby_id
-		let valuesLobby=[currentLobby]
-		const lobbyQuery = `select *from lobby where id=$1`
+		let valuesLobby=[currentLobby,currentUser]
+		const lobbyQuery = `select *, (CASE WHEN (select id from likes_to_users where id_user=$2 and id_lobby=$1) 
+		IS NOT NULL THEN TRUE ELSE FALSE END)
+		 as isLiked from lobby where id=$1`
 		const lobby =await pool.query(lobbyQuery,valuesLobby)
 
 			//retrieve data from items
 		let valuesItem=[lobby.rows[0]["id_item"]]
-		const itemQuery=`select *from items where id=$1`
+		const itemQuery=`select * from items where id=$1`
 		const item = await pool.query(itemQuery,valuesItem)
 		
 		//retrieve data from pictures
@@ -33,7 +37,7 @@ router.get('/init/:lobby_id',async (req,res)=>{
 		const chatQuery=`select chat.id_user, chat.message, users.avatar, users.username, chat.created_at 
 		from chat inner join users on chat.id_user=users.id
 		where id_lobby=$1`
-		const chat =await pool.query(chatQuery,valuesLobby)
+		const chat =await pool.query(chatQuery,[currentLobby])
 
 		//retrieve data from tags
 		const tagsQuery=`select *from items_tags where id_item=$1`
@@ -88,9 +92,13 @@ router.get('/update_lobby/:lobby_id',async (req,res)=>{
 		// chat -> new messages
 		// bid -> amount
 		// users -> avatar and username inner join message chat
-		const updateQuery = `select bid.amount, lobby.likes from bid
+		const updateQuery = `select lobby.likes,(select max(bid.amount) 
+		from bid where bid.id_item=(select id_item from lobby where lobby.id=$1)) as amount 
+		from lobby
+		where lobby.id=$1`
+		 /*`select bid.amount, lobby.likes from bid
 		inner join lobby on lobby.id_item=bid.id_item
-		where lobby.id=$1 order by bid.amount desc limit 1 `
+		where lobby.id=$1 order by bid.amount desc limit 1 `*/
 		const update = await pool.query(updateQuery,values)
 		res.status(200).json(update.rows)
 	}
