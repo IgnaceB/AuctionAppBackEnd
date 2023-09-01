@@ -34,8 +34,9 @@ router.get('/:page',async (req,res)=>{
 		let startSearch = nrEntity*currentPage
 
 	//retrieve data from db from startSearch to startSearch+nrEntity
-		const lobbyQuery = `select *from lobby order by end_at asc offset ${startSearch} limit ${nrEntity}`
-		const dataLobby= await pool.query(lobbyQuery)
+		let values = [startSearch,nrEntity]
+		const lobbyQuery = `select *from lobby order by end_at asc offset $1 limit $2`
+		const dataLobby= await pool.query(lobbyQuery,values)
 
 		res.status(200).json(dataLobby.rows)
 	}
@@ -53,13 +54,13 @@ router.get('/tendance/:page',async (req,res)=>{
 		const currentPage=req.params.page
 		let nrEntity = 20
 		let startSearch = nrEntity*currentPage
-
+		let values = [startSearch,nrEntity]
 		const countQuery = `select *,(lobby.likes+
 		(select count (bid.id) as countbid from bid where bid.id_item=lobby.id_item)
 		+ (select count (id) as countchat from chat where chat.id_lobby=lobby.id)) as mycount 
-		from lobby order by mycount desc offset ${startSearch} limit ${nrEntity}`
+		from lobby order by mycount desc offset $1 limit $2`
 
-		const countTendance=await pool.query(countQuery)
+		const countTendance=await pool.query(countQuery,values)
 		res.status(201).json(countTendance.rows)			
 	}
 	
@@ -76,21 +77,23 @@ router.post('/tags',async (req,res)=>{
 		//creating the query to get the lobby containing items that match all the tags
 		//initialize query
 		let researchQuery=`select *from items inner join lobby on lobby.id_item=items.id where items.id in `
+		
 		for (let i = 0; i<tags.length;i++){
 			//
 			if (i==tags.length-1){
-				researchQuery+=`(select id_item from items_tags where tag='${tags[i]}'`
+				researchQuery+=`(select id_item from items_tags where tag=$${i+1}`
 				for (let i = 0;i<tags.length;i++){
 					researchQuery+=`)`
 				}
 			} 
 			else {
-				researchQuery+=`(select id_item from items_tags where tag='${tags[i]}' and id_item in `
+				researchQuery+=`(select id_item from items_tags where tag=$${i+1} and id_item in `
 			}
 		}
+		console.log(researchQuery)
 //retrieve data from db from startSearch to startSearch+nrEntity
-	
-		const dataLobby= await pool.query(researchQuery)
+		let values = tags
+		const dataLobby= await pool.query(researchQuery,values)
 
 		res.status(200).json(dataLobby.rows)
 	}
@@ -119,22 +122,24 @@ router.post('/tags/:page',async (req,res)=>{
 		for (let i = 0; i<tags.length;i++){
 			//
 			if (i==tags.length-1){
-				researchQuery+=`(select id_item from items_tags where tag='${tags[i]}'`
+				researchQuery+=`(select id_item from items_tags where tag=$${i+3}`
 				for (let i = 0;i<tags.length;i++){
 					researchQuery+=`)`
 				}
 			} 
 			else {
-				researchQuery+=`(select id_item from items_tags where tag='${tags[i]}' and id_item in `
+				researchQuery+=`(select id_item from items_tags where tag=$${i+3} and id_item in `
 			}
 		}
 
 			//finalize query with sorting + paginating
-		researchQuery+=` order by end_at desc offset ${startSearch} limit ${nrEntity}`
-		console.log(researchQuery)
-			//retrieve data from db from startSearch to startSearch+nrEntity
+		researchQuery+=` order by end_at desc offset $1 limit $2`
 	
-		const dataLobby= await pool.query(researchQuery)
+			//retrieve data from db from startSearch to startSearch+nrEntity
+		const values = [nrEntity, startSearch,...tags]
+		
+
+		const dataLobby= await pool.query(researchQuery,values)
 
 		res.status(200).json(dataLobby.rows)
 	}
