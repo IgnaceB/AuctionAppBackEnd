@@ -2,6 +2,7 @@ import express from 'express'
 import pool from '../helpers/db.mjs'
 import {DateTime} from 'luxon'
 import {authentication} from '../helpers/controllers.mjs'
+import {lobbyCreationQueue} from '../server.mjs'
 
 const router=express.Router()
 
@@ -66,6 +67,23 @@ router.post('/',authentication,async (req,res)=>{
 			const createEntryQuery=`insert into items_pictures (id_item, link) VALUES ($1,$2)`
 			const createEntry = await pool.query(createEntryQuery,[getItemID.rows[0]["id"],bodyData.pictures[i]])
 		}}
+
+		//insert a new job in the lobbyCreationQueue who will launch a lobby when the auctionStart date is reached
+
+		const AddTaskToBullQueue = async () => {
+  		await lobbyCreationQueue.add({ 
+  		 name: bodyData.itemName,
+  		 id_item: getItemID.rows[0]["id"],
+  		 created_at : DateTime.now(),
+  		 end_at : bodyData.auctionDuration,
+  		 likes : 0,
+  		 cover_lobby : bodyData.coverLobby }, 
+  		 //setting up delay value of date of start - value of date now
+  		 {delay: DateTime.fromSQL(bodyData.auctionStart).valueOf()-DateTime.now().valueOf()
+  		});
+};		console.log('demand for creation lobby init')
+		AddTaskToBullQueue().catch(console.error)
+
 		res.status(200).json({message : `item added`})
 	}
 	catch(err){
