@@ -69,9 +69,9 @@ router.post('/',authentication,async (req,res)=>{
 		}}
 
 		//insert a new job in the lobbyCreationQueue who will launch a lobby when the auctionStart date is reached
-
+		
 		const AddTaskToBullQueue = async () => {
-			console.log(DateTime.fromISO(bodyData.auctionStart).valueOf()-DateTime.utc().valueOf())
+			console.log(DateTime.utc().valueOf())
   		await lobbyCreationQueue.add({ 
   		 name: bodyData.itemName,
   		 id_item: getItemID.rows[0]["id"],
@@ -87,6 +87,7 @@ router.post('/',authentication,async (req,res)=>{
 };		
 
 		await AddTaskToBullQueue()
+	
 		
 		res.status(200).json({message : `item added`})
 	}
