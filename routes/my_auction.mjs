@@ -40,7 +40,7 @@ router.post('/',authentication,async (req,res)=>{
 		tags : req.body.tags,
 		pictures : req.body.pictures
 	}
-	let now = DateTime.now().toSQL()
+	let now = DateTime.utc().toSQL()
 	console.log(bodyData.id_seller)
 	try{
 		//create the item in the item table
@@ -74,12 +74,12 @@ router.post('/',authentication,async (req,res)=>{
   		await lobbyCreationQueue.add({ 
   		 name: bodyData.itemName,
   		 id_item: getItemID.rows[0]["id"],
-  		 created_at : DateTime.now(),
+  		 created_at : DateTime.utc(),
   		 end_at : bodyData.auctionDuration,
   		 likes : 0,
   		 cover_lobby : bodyData.coverLobby }, 
   		 //setting up delay value of date of start - value of date now
-  		 {delay: DateTime.fromSQL(bodyData.auctionStart).valueOf()-DateTime.now().valueOf()
+  		 {delay: DateTime.fromSQL(bodyData.auctionStart).valueOf()-DateTime.utc().valueOf()
   		});
 };		console.log('demand for creation lobby init')
 		AddTaskToBullQueue().catch(console.error)
@@ -103,7 +103,7 @@ router.patch('/',authentication, async (req,res)=>{
 
 	const idUser=res.locals.user_id
 	const idItem=req.body.item_id
-	let now = DateTime.now().valueOf()
+	let now = DateTime.utc().valueOf()
 
     //verification if the user is the seller on the items table 
 
@@ -169,7 +169,7 @@ router.patch('/pictures',authentication, async (req,res)=>{
 	const newPictures = req.body.newPictures
 	const idUser=res.locals.user_id
 	const idItem=req.body.item_id
-	let now = DateTime.now().valueOf()
+	let now = DateTime.utc().valueOf()
 
     //verification if the user is the seller on the items table 
 
@@ -216,7 +216,7 @@ router.patch('/tags',authentication, async (req,res)=>{
 	const newTags = req.body.newTags
 	const idUser=res.locals.user_id
 	const idItem=req.body.item_id
-	let now = DateTime.now().valueOf()
+	let now = DateTime.utc().valueOf()
 
     //verification if the user is the seller on the items table 
 
@@ -263,7 +263,7 @@ router.delete('/',authentication, async (req,res)=>{
 
 	const idUser=res.locals.user_id
 	const idItem=req.body.item_id
-	let now = DateTime.now().valueOf()
+	let now = DateTime.utc().valueOf()
 
     //verification if the user is the seller on the items table 
 

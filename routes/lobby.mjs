@@ -129,7 +129,7 @@ router.post('/bid',authentication, async (req,res)=>{
 	const bidAmount = req.body.bidAmount
 	const user_id = res.locals.user_id
 	const lobby_id = req.body.lobby_id
-	const date=DateTime.now().toSQL()
+	const date=DateTime.utc().toSQL()
 
 	//find items.id using lobby_id
 	let valuesLobby=[lobby_id]
