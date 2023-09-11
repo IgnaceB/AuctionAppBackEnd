@@ -46,6 +46,22 @@ const lobbySuppressionQueue = new Queue('lobbySuppressionQueue',{
 	password: process.env.PASSWORDREDIS
 })
 
+const tryingQueue = new Queue('tryingQueue',{
+	host : process.env.HOSTREDIS,
+	port : process.env.PORTREDIS,
+	password: process.env.PASSWORDREDIS
+})
+
+const trying = async ()=>{
+	await tryingQueue.add({message : "test"})
+}
+
+trying()
+
+tryingQueue.process(async(job,done)=>{
+	console.log("ca process")
+	done()
+})
 
 
 // create lobby
