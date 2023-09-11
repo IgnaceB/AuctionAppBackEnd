@@ -86,7 +86,7 @@ router.post('/',authentication,async (req,res)=>{
   		console.log('demand for creation lobby init')
 };		
 
-		AddTaskToBullQueue()
+		await AddTaskToBullQueue()
 		
 		res.status(200).json({message : `item added`})
 	}
