@@ -79,8 +79,9 @@ router.post('/',authentication,async (req,res)=>{
   		 likes : 0,
   		 cover_lobby : bodyData.coverLobby }, 
   		 //setting up delay value of date of start - value of date now
-  		 {delay: DateTime.fromSQL(bodyData.auctionStart).valueOf()-DateTime.utc().valueOf()
+  		 {delay: DateTime.fromISO(bodyData.auctionStart).valueOf()-DateTime.utc().valueOf()
   		});
+  		console.log(DateTime.fromISO(bodyData.auctionStart))
 };		console.log('demand for creation lobby init')
 		AddTaskToBullQueue().catch(console.error)
 
