@@ -85,7 +85,8 @@ router.post('/',authentication,async (req,res)=>{
   		console.log(DateTime.fromISO(bodyData.auctionStart))
   		console.log('demand for creation lobby init')
 };		
-		AddTaskToBullQueue().catch(err)
+
+		AddTaskToBullQueue()
 		
 		res.status(200).json({message : `item added`})
 	}
