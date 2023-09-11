@@ -90,7 +90,7 @@ router.post('/tags',async (req,res)=>{
 				researchQuery+=`(select id_item from items_tags where tag=$${i+1} and id_item in `
 			}
 		}
-		console.log(researchQuery)
+		
 //retrieve data from db from startSearch to startSearch+nrEntity
 		let values = tags
 		const dataLobby= await pool.query(researchQuery,values)
