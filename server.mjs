@@ -50,6 +50,7 @@ const lobbySuppressionQueue = new Queue('lobbySuppressionQueue',{
 
 // create lobby
 lobbyCreationQueue.process(async(job, done) => {
+	try {
 
 	const queryCreationLobby=`insert into lobby (name,id_item,created_at,end_at,likes,cover_lobby)
 	VALUES ($1,$2,$3,$4,$5,$6) returning id`
@@ -59,12 +60,17 @@ lobbyCreationQueue.process(async(job, done) => {
 	duration: job.data.end_at}
 	console.log(`lobby id ${job.data.id} created`)
 	done();
+}
+catch(err){
+	throw err
+}
 });
 
 //create worker in suppression queue
 lobbyCreationQueue.on('completed',async (job,result)=>{
 	console.log(`lobby created, setting up suppression id : ${job.data.id}`)
-	try {await lobbySuppressionQueue.add({
+	try {
+		await lobbySuppressionQueue.add({
 		id : job.data.id,
 		end_at : job.data.duration
 	},
