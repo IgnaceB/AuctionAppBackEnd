@@ -91,7 +91,7 @@ lobbySuppressionQueue.process(async(job, done)=>{
 	done()
 })
 
-setInterval(()=>{console.log('lol')},1000)
+
 
 
 app.listen(PORT,()=>{
