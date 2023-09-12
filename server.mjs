@@ -40,6 +40,7 @@ const client = createClient({
     socket: {
         host: '89.58.25.154',
         port: 9001,
+        tls : false,
     
 }});
 
@@ -48,35 +49,32 @@ const connected=async ()=>{
 await client.connect()
 await client.ping()
 console.log(await client.ping())
+console.log(await client.get('mykey'))
 }
 connected()
 
 // queue for create lobby from items creation => my_auction.mjs
 export const lobbyCreationQueue= new Queue('lobbyCreationQueue',{
-	socket: {
-	host : process.env.HOSTREDIS,
-	port : process.env.PORTREDIS},
-	username : 'default',
-	password: process.env.PASSWORDREDIS
-})
+		redis : {
+    password: 'ppOdN5U8Yb3EazS3DiTnUd8k', // use your password here
+        host: '89.58.25.154',
+        port: 9001,
+}})
 
 // queue for delete lobby when auctionduration reach 0
 const lobbySuppressionQueue = new Queue('lobbySuppressionQueue',{
-	socket : {
-	host : process.env.HOSTREDIS,
-	port : process.env.PORTREDIS
-},
-	username : 'default',
-	password: process.env.PASSWORDREDIS
-})
+		redis : {
+    password: 'ppOdN5U8Yb3EazS3DiTnUd8k', // use your password here
+        host: '89.58.25.154',
+        port: 9001,
+}})
 
 const tryingQueue = new Queue('tryingQueue',{
-	socket : {
-	host : process.env.HOSTREDIS,
-	port : process.env.PORTREDIS},
-	username : 'default',
-	password: process.env.PASSWORDREDIS
-})
+		redis : {
+    password: 'ppOdN5U8Yb3EazS3DiTnUd8k', // use your password here
+        host: '89.58.25.154',
+        port: 9001,
+}})
 
 const trying = async ()=>{
 	await tryingQueue.add({message : "test"})
