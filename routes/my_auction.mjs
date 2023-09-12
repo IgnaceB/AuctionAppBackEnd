@@ -41,7 +41,7 @@ router.post('/',authentication,async (req,res)=>{
 		pictures : req.body.pictures
 	}
 	let now = DateTime.utc().toSQL()
-	console.log(bodyData.id_seller)
+	
 	try{
 		//create the item in the item table
 		const createItemQuery=`insert into items (id_seller, name, auction_start, auction_duration, description, cover_lobby, created_at, status)
@@ -56,45 +56,45 @@ router.post('/',authentication,async (req,res)=>{
 
 		//creating one entry for each tag in the bodyData.tag array in the table items_tags
 		if(bodyData.tags){
-		for (let i=0;i<bodyData.tags.length;i++){
-			const createEntryQuery=`insert into items_tags (id_item, tag) VALUES ($1,$2)`
-			const createEntry = await pool.query(createEntryQuery,[getItemID.rows[0]["id"],bodyData.tags[i]])
-		}}
+			for (let i=0;i<bodyData.tags.length;i++){
+				const createEntryQuery=`insert into items_tags (id_item, tag) VALUES ($1,$2)`
+				const createEntry = await pool.query(createEntryQuery,[getItemID.rows[0]["id"],bodyData.tags[i]])
+			}}
 
 		//creating one entry for each picture in the bodyData.pictures array in the table items_pictures
-		if (bodyData.pictures){
-		for (let i=0;i<bodyData.pictures.length;i++){
-			const createEntryQuery=`insert into items_pictures (id_item, link) VALUES ($1,$2)`
-			const createEntry = await pool.query(createEntryQuery,[getItemID.rows[0]["id"],bodyData.pictures[i]])
-		}}
+			if (bodyData.pictures){
+				for (let i=0;i<bodyData.pictures.length;i++){
+					const createEntryQuery=`insert into items_pictures (id_item, link) VALUES ($1,$2)`
+					const createEntry = await pool.query(createEntryQuery,[getItemID.rows[0]["id"],bodyData.pictures[i]])
+				}}
 
 		//insert a new job in the lobbyCreationQueue who will launch a lobby when the auctionStart date is reached
-		
-		const AddTaskToBullQueue = async () => {
-			console.log(DateTime.fromISO(bodyData.auctionStart).valueOf()-DateTime.utc().valueOf())
-  		await lobbyCreationQueue.add({ 
-  		 name: bodyData.itemName,
-  		 id_item: getItemID.rows[0]["id"],
-  		 created_at : DateTime.utc(),
-  		 end_at : bodyData.auctionDuration,
-  		 likes : 0,
-  		 cover_lobby : bodyData.coverLobby }, 
+				
+				const AddTaskToBullQueue = async () => {
+					
+					await lobbyCreationQueue.add({ 
+						name: bodyData.itemName,
+						id_item: getItemID.rows[0]["id"],
+						created_at : DateTime.utc(),
+						end_at : bodyData.auctionDuration,
+						likes : 0,
+						cover_lobby : bodyData.coverLobby }, 
   		 //setting up delay value of date of start - value of date now
-  		 {delay: DateTime.fromISO(bodyData.auctionStart).valueOf()-DateTime.utc().valueOf()
-  		});
-  		console.log(DateTime.fromISO(bodyData.auctionStart))
-  		console.log('demand for creation lobby init')
-};		
+						{delay: DateTime.fromISO(bodyData.auctionStart).valueOf()-DateTime.utc().valueOf()
+					});
+  	/*	console.log(await lobbyCreationQueue.getJobCounts())
+  		console.log('demand for creation lobby init')*/
+				};		
 
-		await AddTaskToBullQueue()
-	
-		
-		res.status(200).json({message : `item added`})
-	}
-	catch(err){
-		console.log(err)
-		res.status(404).json({message:err})
-	}})
+				await AddTaskToBullQueue()
+				
+				
+				res.status(200).json({message : `item added`})
+			}
+			catch(err){
+				console.log(err)
+				res.status(404).json({message:err})
+			}})
 
 router.patch('/',authentication, async (req,res)=>{
 	
@@ -120,7 +120,7 @@ router.patch('/',authentication, async (req,res)=>{
 		// verification if the auction didn't start yet
 		const timeQuery = `select auction_start from items where id=$1 `
 		const timeRequest = await pool.query(timeQuery,[idItem])
-	
+		
 		if (timeRequest.rows[0].auction_start.valueOf()>now){
 			
 
@@ -186,9 +186,9 @@ router.patch('/pictures',authentication, async (req,res)=>{
 		// verification if the auction didn't start yet
 		const timeQuery = `select auction_start from items where id=$1 `
 		const timeRequest = await pool.query(timeQuery,[idItem])
-	
+		
 		if (timeRequest.rows[0].auction_start.valueOf()>now){
-				try{
+			try{
 				//delete previous pictures
 				const queryDeletePictures=`delete from items_pictures where id_item=$1`
 				const deletePictures= await pool.query(queryDeletePictures,[idItem])
@@ -233,9 +233,9 @@ router.patch('/tags',authentication, async (req,res)=>{
 		// verification if the auction didn't start yet
 		const timeQuery = `select auction_start from items where id=$1 `
 		const timeRequest = await pool.query(timeQuery,[idItem])
-	
+		
 		if (timeRequest.rows[0].auction_start.valueOf()>now){
-				try{
+			try{
 				//delete previous Tags
 				const queryDeleteTags=`delete from items_tags where id_item=$1`
 				const deleteTags= await pool.query(queryDeleteTags,[idItem])
