@@ -53,21 +53,28 @@ connected()
 
 // queue for create lobby from items creation => my_auction.mjs
 export const lobbyCreationQueue= new Queue('lobbyCreationQueue',{
+	socket: {
 	host : process.env.HOSTREDIS,
-	port : process.env.PORTREDIS,
+	port : process.env.PORTREDIS},
+	username : 'default',
 	password: process.env.PASSWORDREDIS
 })
 
 // queue for delete lobby when auctionduration reach 0
 const lobbySuppressionQueue = new Queue('lobbySuppressionQueue',{
+	socket : {
 	host : process.env.HOSTREDIS,
-	port : process.env.PORTREDIS,
+	port : process.env.PORTREDIS
+},
+	username : 'default',
 	password: process.env.PASSWORDREDIS
 })
 
 const tryingQueue = new Queue('tryingQueue',{
+	socket : {
 	host : process.env.HOSTREDIS,
-	port : process.env.PORTREDIS,
+	port : process.env.PORTREDIS},
+	username : 'default',
 	password: process.env.PASSWORDREDIS
 })
 
