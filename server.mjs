@@ -32,6 +32,26 @@ app.use('/my_auction',auctionRoutes)
 app.use('/chat',chatRoutes)
 
 
+import { createClient } from 'redis';
+
+const client = createClient({
+    username: 'default', // use your Redis user. More info https://redis.io/docs/management/security/acl/
+    password: 'ppOdN5U8Yb3EazS3DiTnUd8k', // use your password here
+        host: '89.58.25.154',
+        port: 9001
+    
+});
+client.on('error', err => console.log('Redis Client Error', err))
+const connected=async ()=>{
+	
+
+await client.connect();
+await client.set('foo','bar')
+const value = await client.get('foo')
+console.log(value)
+}
+connected()
+
 // queue for create lobby from items creation => my_auction.mjs
 export const lobbyCreationQueue= new Queue('lobbyCreationQueue',{
 	host : process.env.HOSTREDIS,
