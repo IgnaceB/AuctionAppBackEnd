@@ -37,20 +37,17 @@ import { createClient } from 'redis';
 const client = createClient({
     username: 'default', // use your Redis user. More info https://redis.io/docs/management/security/acl/
     password: 'ppOdN5U8Yb3EazS3DiTnUd8k', // use your password here
+    socket: {
         host: '89.58.25.154',
-        port: 9001
+        port: 9001,
     
-});
+}});
 
 const connected=async ()=>{
-client.on('error', err => console.log('Redis Client Error', err))
-
-await client.connect();
-await client.set('foo','bar')
-const ping = await client.ping()
-	console.log(ping)
-const value = await client.get('foo')
-console.log(value)
+	client.on('error', err => console.log('Redis Client Error', err))
+await client.connect()
+await client.ping()
+console.log(await client.ping())
 }
 connected()
 
