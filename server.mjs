@@ -3,10 +3,22 @@ import cors from 'cors'
 import connect from './helpers/db.mjs'
 import pool from './helpers/db.mjs'
 import Queue from 'bull'
+import { createServer } from "http";
+import { Server } from "socket.io";
 
 const PORT = 3000
+const PORTSocket = 3001
 const app = express()
+const httpServer = createServer(app)
+export const io = new Server(httpServer)
 
+io.on("connection",(socket)=>{
+	console.log('user connected')
+})
+
+const count = io.engine.clientsCount
+
+console.log(count)
 
 import loginRoutes from './routes/login.mjs'
 import allLobbyRoutes from './routes/allLobby.mjs'
@@ -30,6 +42,16 @@ app.use('/account',accountRoutes)
 app.use('/my_bidding',biddingRoutes)
 app.use('/my_auction',auctionRoutes)
 app.use('/chat',chatRoutes)
+app.get('/socket',(req,res)=>{
+	try {io.emit('message','dqzdzqdz')
+	
+	res.sendStatus(200)
+
+}
+	catch(err){
+		throw err
+	}
+})
 
 
 /*import { createClient } from 'redis';
@@ -129,7 +151,9 @@ lobbySuppressionQueue.process(async(job, done)=>{
 })
 
 
-
+httpServer.listen(PORTSocket,()=>{
+	console.log(`socket running on port ${PORTSocket}`)
+})
 
 app.listen(PORT,()=>{
 	console.log(`API running on port ${PORT}`)
