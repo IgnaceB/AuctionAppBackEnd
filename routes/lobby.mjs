@@ -142,7 +142,10 @@ router.post('/bid',authentication, async (req,res)=>{
 	let valuesItem=[findItem.rows[0]["id"]]
 	const findHigherBidQuery=`select amount from bid where id_item=$1 order by amount desc limit 1`
 	const higherBid=await pool.query(findHigherBidQuery,valuesItem)
-	if (higherBid.rows[0]['amount']<bidAmount){
+
+	if (higherBid.rows[0]){
+
+	if (higherBid.rows[0]["amount"]<bidAmount){
 
 	//update data on table bid
 		try{
@@ -166,6 +169,15 @@ router.post('/bid',authentication, async (req,res)=>{
 
 	else {
 		res.status(401).json({message : 'error, the bid is not the higher on this item'})
+	}}
+	else {
+		let valuesBid=[user_id,findItem.rows[0]["id"],date,bidAmount]
+			//insert new bid
+			const bidQuery = `insert into bid (id_bidder,id_item,created_at,amount) values 
+			($1,$2,$3,$4)`
+			const updateBid= await pool.query(bidQuery,valuesBid)
+
+			res.status(200).json({message : "successfully bid on the item"})   
 	}
 })
 
