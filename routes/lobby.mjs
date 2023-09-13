@@ -130,7 +130,7 @@ router.post('/bid',authentication, async (req,res)=>{
 	const user_id = res.locals.user_id
 	const lobby_id = req.body.lobby_id
 	const date=DateTime.utc().toSQL()
-
+	
 	//find items.id using lobby_id
 	let valuesLobby=[lobby_id]
 	const findItemQuery = `select items.id from lobby 
@@ -149,7 +149,8 @@ router.post('/bid',authentication, async (req,res)=>{
 			//delete previous bid -- remove ask by louis
 			/*const deleteQuery = `delete from bid where id_bidder=${user_id} and id_item=${findItem.rows[0]["id"]}`
 			const deletePreviousBid = await connect(deleteQuery)*/
-			let valuesBid=[user_id,[findItem.rows[0]["id"]],date,bidAmount]
+		
+			let valuesBid=[user_id,findItem.rows[0]["id"],date,bidAmount]
 			//insert new bid
 			const bidQuery = `insert into bid (id_bidder,id_item,created_at,amount) values 
 			($1,$2,$3,$4)`
