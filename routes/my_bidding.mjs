@@ -17,7 +17,7 @@ router.get('/:user_id',async (req,res)=>{
 		
 		const bidQuery = `select *,(select max(amount) from bid 
 		as max_bid where max_bid.id_item = bid.id_item) as max_amount,
-		(select count (distinct id_item) from bid where id_bidder=$1 as nr_items
+		(select count (distinct id_item) from bid where id_bidder=$1) as nr_items
 		from bid 
 		where id_bidder=$1
 		order by bid.id_item desc`
