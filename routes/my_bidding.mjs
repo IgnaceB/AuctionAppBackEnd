@@ -131,11 +131,13 @@ router.post('/payment/stripe',authentication, async (req,res)=>{
 				},
 				],
 				mode: 'payment',
-				metadata : {
-    			'id_item': `${itemInformation.rows[0]["id"]}`,// this can be anything stored to your db
-    		},
     		success_url: `http://platform.oxomoto.co`,
     		cancel_url: `http://platform.oxomoto.co`,
+    		 payment_intent_data:{
+    		 	metadata : {
+    		 		'id_item': `${itemInformation.rows[0]["id"]}`,
+    		 	},
+    		 },
     	});
 
 			res.status(303).json({message : session.url});
