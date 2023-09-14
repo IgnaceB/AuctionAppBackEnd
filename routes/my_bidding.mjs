@@ -160,9 +160,9 @@ router.post('/payment', async (req,res)=>{
 	//retrieve the id of the user and the id of the item 
 /*	const currentUser=res.locals.user_id*/
 /*	const currentItem=req.body.item_id*/
-	console.log(req.body.data.metadata)
+	console.log(req.body.data.object.metadata)
 	console.log(req.body.data)
-	const currentItem=req.body.metadata.id_item
+	const currentItem=req.body.data.object.metadata.id_item
 	//check if the bid exists and is the higher on this item
 
 /*	const checkBidQuery=`select *from bid where id_bidder=$1 and id_item=$2
