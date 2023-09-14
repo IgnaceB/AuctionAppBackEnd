@@ -1,12 +1,28 @@
 import express from 'express'
 import connect from '../helpers/db.mjs'
 import {DateTime} from 'luxon'
-
-//middlewar authenticate JWT
-
+import pkg from '@sendgrid/mail'
+const sgMail = pkg
 import dotenv from 'dotenv'
 dotenv.config()
 import jwt from 'jsonwebtoken'
+
+sgMail.setApiKey(process.env.sendgridKey)
+
+//middlewar authenticate JWT
+
+export const mailSender = async (msg) =>{
+	try {
+		await sgMail.send(msg)
+		console.log('email sent')}
+		catch(err){
+			throw err
+		}
+
+}
+
+
+
 
 export const authentication=(req,res,next)=>{
 

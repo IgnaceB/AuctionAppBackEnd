@@ -3,6 +3,7 @@ import pool from '../helpers/db.mjs'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import {authentication} from '../helpers/controllers.mjs'
+import {mailSender} from '../helpers/controllers.mjs'
 
 const router=express.Router()
 
@@ -44,7 +45,8 @@ router.post('/login',async(req,res)=>{
 })
 
 
-router.post('/signup',async(req,res)=>{
+router.post('/signup', async(req,res)=>{
+
 
 	//retrieve data from request
 	const email=req.body.email
@@ -82,12 +84,25 @@ router.post('/signup',async(req,res)=>{
 			($1,$2)`
 			const createLogin=await pool.query(queryLogin,[idUser.rows[0]["id"],hashPassword])
 
-			return res.status(201).json({message : "user successfully created"})
-		}
-		catch(err){
-			return res.status(404).json({message:"connection failed, contact admin"})
-		}
-	}
+
+
+			// send email validation
+
+			const msg = {
+  to: `${email}`, // Change to your recipient
+  from: 'ignacebernard@hotmail.com', // Change to your verified sender
+  subject: 'You signed up to AuctionApp',
+  text: 'and easy to do anywhere, even with Node.js',
+  html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+}
+mailSender(msg)
+
+return res.status(201).json({message : "user successfully created"})
+}
+catch(err){
+	return res.status(404).json({message:"connection failed, contact admin"})
+}
+}
 })
 
 export default router
