@@ -131,54 +131,71 @@ router.post('/payment/stripe',authentication, async (req,res)=>{
 				},
 				],
 				mode: 'payment',
-				success_url: `http://platform.oxomot.co/success.html`,
-				cancel_url: `http://platform.oxomot.co/cancel.html`,
-			});
+				metadata : {
+    			'id_item': `${itemInformation.rows[0]["id"]}`,// this can be anything stored to your db
+    		},
+    		success_url: `http://platform.oxomoto.co`,
+    		cancel_url: `http://platform.oxomoto.co`,
+    	});
 
 			res.status(303).json({message : session.url});
 		}
-	catch(err){
-		console.log(err)
-		res.status(404).json({message:'connection error, contact webmaster'})
+		catch(err){
+			console.log(err)
+			res.status(404).json({message:'connection error, contact webmaster'})
+		}
 	}
-}
-else {
-	res.status(403).json({message:'bid error, no such payment'})
-}
+	else {
+		res.status(403).json({message:'bid error, no such payment'})
+	}
 })
 
-//update status of an item -> payed
-router.post('/payment',authentication, async (req,res)=>{
+//update status of an item -> payed with webhook on stripes dashboard
+router.post('/payment', async (req,res)=>{
+	const stripe = new Stripe(process.env.stripeKey,{
+		apiVersion: '2023-08-16',
+	})
 	//retrieve the id of the user and the id of the item 
-	const currentUser=res.locals.user_id
-	const currentItem=req.body.item_id
-
+/*	const currentUser=res.locals.user_id*/
+/*	const currentItem=req.body.item_id*/
+	console.log(req.body.data.metadata)
+	console.log(req.body.data)
+	const currentItem=req.body.metadata.id_item
 	//check if the bid exists and is the higher on this item
 
-	const checkBidQuery=`select *from bid where id_bidder=$1 and id_item=$2
+/*	const checkBidQuery=`select *from bid where id_bidder=$1 and id_item=$2
 	and amount=(select max(amount) from bid as max_bid where bid.id_item=max_bid.id_item)
 	and 2=(select status from items where items.id=bid.id_item) `
 	const checkBid=await pool.query(checkBidQuery,[currentUser,currentItem])
 
 	//check if the item have the good status
 
-	if(checkBid.rows.length>0){
+	if(checkBid.rows.length>0){*/
+
+// Set your secret key. Remember to switch to your live secret key in production.
+// See your keys here: https://dashboard.stripe.com/apikeys
+/*
+	const intent = await stripe.paymentIntents.retrieve(`{{${req.body.data.object.id}}`);
+	const charges = intent.charges.data;*/
+/*console.log(charges)
+console.log(intent)*/
 
 		try{
 
 	//Update status of items -> 3 -> payed
 			const paymentQuery = `update items set status='3' where id=$1`
 			const updateStatus= await pool.query(paymentQuery,[currentItem])
-			
+			console.log('status updated')
 			res.status(200).json({message : 'status updated'})
 		}
 		catch(err){
 			console.log(err)
 			res.status(404).json({message:'connection error, contact webmaster'})
-		}}
-		else {
-			res.status(401).json({message:'error, no such bid'})
 		}
-	})
+/*	}*/
+	/*	else {
+			res.status(401).json({message:'error, no such bid'})
+		}*/
+})
 
 export default router
