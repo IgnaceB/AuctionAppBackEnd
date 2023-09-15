@@ -12,7 +12,7 @@ router.get('/:lobby_id',async (req,res)=>{
 		const idLobby = req.params.lobby_id
 
 		const values = [idLobby]
-		const chatQuery = `select chat.id_user, chat.message, users.avatar, users.username, chat.created_at from chat inner join users on chat.id_user=users.id
+		const chatQuery = `select users.avatar, chat.id_user, chat.message, users.avatar, users.username, chat.created_at from chat inner join users on chat.id_user=users.id
 		where id_lobby=$1`
 		const chat=await pool.query(chatQuery,values)
 
