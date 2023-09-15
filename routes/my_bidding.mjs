@@ -133,6 +133,8 @@ router.post('/payment/stripe',authentication, async (req,res)=>{
 				mode: 'payment',
     		success_url: `http://platform.oxomoto.co`,
     		cancel_url: `http://platform.oxomoto.co`,
+
+    		//metadata to retrieve the item on the webhook request
     		 payment_intent_data:{
     		 	metadata : {
     		 		'id_item': `${itemInformation.rows[0]["id"]}`,
@@ -154,33 +156,10 @@ router.post('/payment/stripe',authentication, async (req,res)=>{
 
 //update status of an item -> payed with webhook on stripes dashboard
 router.post('/payment', async (req,res)=>{
-	const stripe = new Stripe(process.env.stripeKey,{
-		apiVersion: '2023-08-16',
-	})
-	//retrieve the id of the user and the id of the item 
-/*	const currentUser=res.locals.user_id*/
-/*	const currentItem=req.body.item_id*/
-	console.log(req.body.data.object.metadata)
-	console.log(req.body.data)
+
+	//retrieve id of the item in the webhook request
 	const currentItem=req.body.data.object.metadata.id_item
-	//check if the bid exists and is the higher on this item
 
-/*	const checkBidQuery=`select *from bid where id_bidder=$1 and id_item=$2
-	and amount=(select max(amount) from bid as max_bid where bid.id_item=max_bid.id_item)
-	and 2=(select status from items where items.id=bid.id_item) `
-	const checkBid=await pool.query(checkBidQuery,[currentUser,currentItem])
-
-	//check if the item have the good status
-
-	if(checkBid.rows.length>0){*/
-
-// Set your secret key. Remember to switch to your live secret key in production.
-// See your keys here: https://dashboard.stripe.com/apikeys
-/*
-	const intent = await stripe.paymentIntents.retrieve(`{{${req.body.data.object.id}}`);
-	const charges = intent.charges.data;*/
-/*console.log(charges)
-console.log(intent)*/
 
 		try{
 
@@ -194,10 +173,7 @@ console.log(intent)*/
 			console.log(err)
 			res.status(404).json({message:'connection error, contact webmaster'})
 		}
-/*	}*/
-	/*	else {
-			res.status(401).json({message:'error, no such bid'})
-		}*/
+
 })
 
 export default router

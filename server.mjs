@@ -8,18 +8,17 @@ import { Server } from "socket.io";
 
 
 
-
-const PORT = 3000
-const PORTSocket = 3001
 const app = express()
+const PORT = 3000
+
+// try on socket not implemented !!!!
+/*const PORTSocket = 3001
 const httpServer = createServer(app)
 export const io = new Server(httpServer)
-
 io.on("connection",(socket)=>{
 	console.log('user connected')
 })
-
-const count = io.engine.clientsCount
+const count = io.engine.clientsCount*/
 
 console.log(count)
 
@@ -45,20 +44,20 @@ app.use('/account',accountRoutes)
 app.use('/my_bidding',biddingRoutes)
 app.use('/my_auction',auctionRoutes)
 app.use('/chat',chatRoutes)
-app.get('/socket',(req,res)=>{
-	try {io.emit('message','dqzdzqdz')
-	
-	res.sendStatus(200)
 
+//try on socket, not implemented !!!!
+/*app.get('/socket',(req,res)=>{
+	try {io.emit('message','dqzdzqdz')
+	res.sendStatus(200)
 }
 	catch(err){
 		throw err
 	}
-})
+})*/
 
 
+// connection to Redis db Not used !!!!!
 /*import { createClient } from 'redis';
-
 const client = createClient({
     username: 'default', // use your Redis user. More info https://redis.io/docs/management/security/acl/
     password: 'ppOdN5U8Yb3EazS3DiTnUd8k', // use your password here
@@ -66,9 +65,7 @@ const client = createClient({
         host: '89.58.25.154',
         port: 9001,
         tls : false,
-    
 }});
-
 const connected=async ()=>{
 	client.on('error', err => console.log('Redis Client Error', err))
 await client.connect()
@@ -77,6 +74,7 @@ console.log(await client.ping())
 console.log(await client.get('mykey'))
 }
 connected()*/
+
 
 // queue for create lobby from items creation => my_auction.mjs
 export const lobbyCreationQueue= new Queue('lobbyCreationQueue',{
@@ -104,7 +102,7 @@ limiter : {
 
 
 
-// create lobby
+// describe process of creating lobby queue =>create lobby
 lobbyCreationQueue.process(async(job, done) => {
 	try {
 		const queryCreationLobby=`insert into lobby (name,id_item,created_at,end_at,likes,cover_lobby)
@@ -127,7 +125,6 @@ lobbyCreationQueue.process(async(job, done) => {
 
 //create worker in suppression queue
 lobbyCreationQueue.on('completed',async (job,result)=>{
-	/*console.log(`lobby created, setting up suppression id : ${job.data.id}, item ${job.data.item}`)*/
 	try {
 		await lobbySuppressionQueue.add({
 			id : job.data.id,
@@ -135,28 +132,25 @@ lobbyCreationQueue.on('completed',async (job,result)=>{
 			item : job.data.item
 		},
 		{delay : job.data.duration})
-	/*	console.log('on queue')*/
 	}
 	catch(err){
 		throw err
 	}
 })
 
-// delete lobby
+// describe process of suppression queue => delete lobby
 lobbySuppressionQueue.process(async(job, done)=>{
-	/*console.log(job.data.item)*/
 	const queryUpdateItem= `update items set status=2 where id=$1`
 	const updateItem= await pool.query(queryUpdateItem,[job.data.item])
 	const querySuppressionLobby = `delete from lobby where id=$1`
 	const supppressionLobby= await pool.query(querySuppressionLobby,[job.data.id])
-/*	console.log(`lobby id : ${job.data.id} deleted`)*/
 	done()
 })
 
-
-httpServer.listen(PORTSocket,()=>{
+//try on socket => not implemented
+/*httpServer.listen(PORTSocket,()=>{
 	console.log(`socket running on port ${PORTSocket}`)
-})
+})*/
 
 app.listen(PORT,()=>{
 	console.log(`API running on port ${PORT}`)
