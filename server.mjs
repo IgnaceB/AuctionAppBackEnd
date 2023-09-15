@@ -20,7 +20,7 @@ io.on("connection",(socket)=>{
 })
 const count = io.engine.clientsCount*/
 
-console.log(count)
+
 
 import loginRoutes from './routes/login.mjs'
 import allLobbyRoutes from './routes/allLobby.mjs'
