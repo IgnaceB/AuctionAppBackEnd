@@ -60,10 +60,10 @@ app.use('/chat',chatRoutes)
 /*import { createClient } from 'redis';
 const client = createClient({
     username: 'default', // use your Redis user. More info https://redis.io/docs/management/security/acl/
-    password: 'ppOdN5U8Yb3EazS3DiTnUd8k', // use your password here
+    password: process.env.PASSWORDREDIS, // use your password here
     socket: {
-        host: '89.58.25.154',
-        port: 9001,
+        host: process.env.HOSTREDIS,
+        port: process.env.PORTREDIS,
         tls : false,
 }});
 const connected=async ()=>{
@@ -79,9 +79,9 @@ connected()*/
 // queue for create lobby from items creation => my_auction.mjs
 export const lobbyCreationQueue= new Queue('lobbyCreationQueue',{
 	redis : {
-    password: 'ppOdN5U8Yb3EazS3DiTnUd8k', // use your password here
-    host: '89.58.25.154',
-    port: 9001,
+    password: process.env.PASSWORDREDIS, // use your password here
+    host: process.env.HOSTREDIS,
+    port: process.env.PORTREDIS,
 },
 limiter : {
 	max : 10000,
@@ -91,9 +91,9 @@ limiter : {
 // queue for delete lobby when auctionduration reach 0
 const lobbySuppressionQueue = new Queue('lobbySuppressionQueue',{
 	redis : {
-    password: 'ppOdN5U8Yb3EazS3DiTnUd8k', // use your password here
-    host: '89.58.25.154',
-    port: 9001,
+    password: process.env.PASSWORDREDIS, // use your password here
+    host: process.env.HOSTREDIS,
+    port: process.env.PORTREDIS,
 },
 limiter : {
 	max : 10000,
